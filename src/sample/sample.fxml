@@ -4,16 +4,15 @@
 <?import javafx.scene.layout.*?>
 
 
-<GridPane alignment="center" hgap="10" vgap="10" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.2-internal" fx:controller="sample.Controller">
-   <columnConstraints>
-      <ColumnConstraints />
-      <ColumnConstraints />
-   </columnConstraints>
-   <rowConstraints>
-      <RowConstraints />
-   </rowConstraints>
-   <children>
-      <ComboBox id="NIC" fx:id="NIC" prefWidth="150.0" GridPane.columnIndex="1" />
-      <Label text="NIC:" />
-   </children>
-</GridPane>
+<BorderPane  xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.2-internal" fx:controller="sample.Controller">
+
+   <top>
+   <GridPane alignment="center" hgap="10" vgap="10">
+      <children>
+         <ComboBox id="NIC" fx:id="NIC" prefWidth="250.0" GridPane.columnIndex="1" />
+         <Label text="NIC:" />
+      </children>
+   </GridPane>
+   </top>
+
+</BorderPane>

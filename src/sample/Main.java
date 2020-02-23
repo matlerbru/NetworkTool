@@ -16,21 +16,26 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+        networkInterface.updateNIC();
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
+        Parent root = loader.load();
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
 
-        networkInterface.updateNIC();
+        Controller controller = loader.<Controller>getController();
+
+        controller.setData();
 
 
-        networkInterface.NIC testObject = new networkInterface.NIC("test disp name.", "navn", "syg mac addresse", "192.168.1.80", false, "255.255.255.255", "192.168.1.1");
+        //networkInterface.NIC testObject = new networkInterface.NIC("test disp name.", "navn", "syg mac addresse", "192.168.1.80", false, "255.255.255.255", "192.168.1.1");
 
 
 
         //networkInterface.printNIC();
 
-        networkInterface.pushNIC(testObject, 2);
+        //networkInterface.pushNIC(testObject, 2);
 
     }
 

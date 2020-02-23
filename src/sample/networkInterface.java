@@ -13,7 +13,7 @@ import java.util.Enumeration;
 
 public class networkInterface {
 
-    private static ArrayList<NIC> networkInterface = new ArrayList<NIC>();
+    public static ArrayList<NIC> NIC = new ArrayList<NIC>();
 
     public static class NIC {
         public NIC() {
@@ -169,7 +169,7 @@ public class networkInterface {
                 } else {
                     try {
                         if (nic.displayName.length() > 0) {
-                            networkInterface.add(nic);
+                            NIC.add(nic);
                            nic = new NIC(null, null, null, null, false, null, null);
                         }
                     } catch (Exception e) {
@@ -199,17 +199,17 @@ public class networkInterface {
     }
 
     public static void printNIC(int index) {
-        printNIC(networkInterface.get(index));
+        printNIC(NIC.get(index));
     }
 
     public static void printNIC() {
-        for (int index = 0; index < networkInterface.size(); index++) {
+        for (int index = 0; index < NIC.size(); index++) {
             printNIC(index);
         }
     }
 
     public static void pushNIC (NIC nic, int index) throws IOException {
-        String name = networkInterface.get(index).getDisplayName();
+        String name = NIC.get(index).getDisplayName();
 
         String command = "netsh interface ipv4 set address name=\"" + name + "\"";
 

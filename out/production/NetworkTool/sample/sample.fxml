@@ -13,7 +13,7 @@
       <RowConstraints />
    </rowConstraints>
    <children>
-      <ChoiceBox fx:id="NIC" prefWidth="150.0" GridPane.columnIndex="1" />
+      <ComboBox id="NIC" fx:id="NIC" prefWidth="150.0" GridPane.columnIndex="1" />
       <Label text="NIC:" />
    </children>
 </GridPane>

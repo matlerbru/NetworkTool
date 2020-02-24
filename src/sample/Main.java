@@ -28,19 +28,6 @@ public class Main extends Application {
 
         controller.initialize();
 
-
-        //networkInterface.NIC testObject = new networkInterface.NIC("test disp name.", "navn", "syg mac addresse", "192.168.1.80", false, "255.255.255.255", "192.168.1.1");
-
-
-
-        //networkInterface.printNIC();
-
-        //networkInterface.pushNIC(testObject, 2);
-
-
-
-
-
     }
 
 

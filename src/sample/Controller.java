@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.shape.Box;
 
 import java.io.IOException;
+import java.math.MathContext;
 
 public class Controller {
 
@@ -141,10 +142,12 @@ public class Controller {
         dhcp.setSelected(nic.isDhcp());
         setIpFieldsEditable(!nic.isDhcp());
         name.setText(nic.getDisplayName());
+        macAdress.setText(nic.getMAC());
     }
 
     public void applyButtonEvent () throws IOException {
         networkInterface.pushNIC(tempNic, NIC.getSelectionModel().getSelectedIndex());
         networkInterface.updateNIC(NIC.getSelectionModel().getSelectedIndex());
+        setUiTo(networkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
     }
 }

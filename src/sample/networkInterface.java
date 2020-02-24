@@ -187,6 +187,11 @@ public class networkInterface {
         }
     }
 
+    public static void updateNIC(int index) throws IOException {
+
+    }
+
+
     public static void printNIC(NIC nic) {
         System.out.println("Display name: " + nic.getDisplayName());
         System.out.println("Name: " + nic.getName());
@@ -234,6 +239,16 @@ public class networkInterface {
         while ((line = reader.readLine()) != null) {
             System.out.println(line);
         }
+    }
+
+    public static void clone(NIC destination, NIC source) {
+        destination.name = source.name;
+        destination.displayName = source.displayName;
+        destination.dhcp = source.dhcp;
+        destination.MAC = source.MAC;
+        destination.IPaddress = source.IPaddress;
+        destination.subnetMask = source.subnetMask;
+        destination.defaultGateway = source.defaultGateway;
     }
 }
 

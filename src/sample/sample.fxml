@@ -47,15 +47,15 @@
             <Label text="IP:" GridPane.columnIndex="1" />
             <Label text="Subnet mask:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label text="Default gateway:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField fx:id="IP" onAction="#ipEvent" onKeyPressed="#ipEvent" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
-            <TextField fx:id="subnetMask" onAction="#subnetMaskEvent" onKeyPressed="#subnetMaskEvent" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-            <TextField fx:id="defaultGateway" onAction="#DefaultGatewayEvent" onKeyPressed="#DefaultGatewayEvent" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+            <TextField fx:id="IP" disable="true" onAction="#ipEvent" onInputMethodTextChanged="#ipEvent" onKeyPressed="#ipEvent" onKeyReleased="#ipEvent" onKeyTyped="#ipEvent" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
+            <TextField fx:id="subnetMask" disable="true" onAction="#subnetMaskEvent" onInputMethodTextChanged="#subnetMaskEvent" onKeyPressed="#subnetMaskEvent" onKeyReleased="#subnetMaskEvent" onKeyTyped="#subnetMaskEvent" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <TextField fx:id="defaultGateway" disable="true" onAction="#DefaultGatewayEvent" onInputMethodTextChanged="#DefaultGatewayEvent" onKeyPressed="#DefaultGatewayEvent" onKeyReleased="#DefaultGatewayEvent" onKeyTyped="#DefaultGatewayEvent" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
             <Label text="MAC:" GridPane.columnIndex="4" />
             <TextField fx:id="macAdress" disable="true" editable="false" GridPane.columnIndex="5" GridPane.halignment="CENTER" />
             <Label text="DHCP:" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-            <CheckBox fx:id="dhcp" mnemonicParsing="false" onAction="#dhcpEvent" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <CheckBox fx:id="dhcp" disable="true" mnemonicParsing="false" onAction="#dhcpEvent" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
             <Label text="Name:" GridPane.columnIndex="4" GridPane.rowIndex="2" />
-            <TextField fx:id="name" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+            <TextField fx:id="name" disable="true" onAction="#nameEvent" onInputMethodTextChanged="#nameEvent" onKeyPressed="#nameEvent" onKeyReleased="#nameEvent" onKeyTyped="#nameEvent" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
          </children>
       </GridPane>
    </center>
@@ -76,9 +76,9 @@
           <RowConstraints minHeight="10.0" prefHeight="5.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button mnemonicParsing="false" prefWidth="60.0" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Button mnemonicParsing="false" onAction="#revertButtonEvent" prefWidth="60.0" text="Revert" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <Button mnemonicParsing="false" onAction="#defaultButtonEvent" prefWidth="60.0" text="Default" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+            <Button fx:id="applytButton" disable="true" mnemonicParsing="false" onAction="#applyButtonEvent" prefWidth="60.0" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button fx:id="revertButton" disable="true" mnemonicParsing="false" onAction="#revertButtonEvent" prefWidth="60.0" text="Revert" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <Button fx:id="defaultButton" disable="true" mnemonicParsing="false" onAction="#defaultButtonEvent" prefWidth="60.0" text="Default" GridPane.columnIndex="5" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </bottom>

@@ -4,10 +4,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.shape.Box;
 
 import java.io.IOException;
@@ -17,6 +14,7 @@ public class Controller {
 
     networkInterface.NIC tempNic = new networkInterface.NIC();
     networkInterface.NIC lastSetup = new networkInterface.NIC();
+    private boolean lastSetupSet = true;
 
     @FXML
     private ComboBox<String> NIC;
@@ -39,9 +37,17 @@ public class Controller {
     @FXML
     private TextField defaultGateway;
 
+    @FXML
+    private Button revertButton;
+
+    @FXML
+    private Button defaultButton;
+
+    @FXML
+    private Button applytButton;
+
     public void initialize () {
         setNicData();
-
     }
 
     public void setNicData() {
@@ -60,6 +66,10 @@ public class Controller {
         dhcp.setSelected(networkInterface.NIC.get( index ).isDhcp());
         setIpFieldsEditable(!dhcp.isSelected());
         name.setText(networkInterface.NIC.get( index ).getDisplayName());
+
+        dhcp.setDisable(false);
+        name.setDisable(false);
+        setIpFieldsEditable(!networkInterface.NIC.get(index).isDhcp());
     }
 
     public void setIpFieldsEditable (boolean editable) {
@@ -91,6 +101,8 @@ public class Controller {
         networkInterface.printNIC(tempNic);
 
         networkInterface.printNIC(tempNic);
+        defaultButton.setDisable(false);
+        applytButton.setDisable(false);
     }
 
     public void ipEvent () {
@@ -99,6 +111,8 @@ public class Controller {
         } else {
             IP.setText(tempNic.getIPaddress());
         }
+        defaultButton.setDisable(false);
+        applytButton.setDisable(false);
     }
 
     public void subnetMaskEvent () {
@@ -107,6 +121,8 @@ public class Controller {
         } else {
             subnetMask.setText(tempNic.getSubnetMask());
         }
+        defaultButton.setDisable(false);
+        applytButton.setDisable(false);
     }
 
     public void DefaultGatewayEvent () {
@@ -115,25 +131,66 @@ public class Controller {
         } else {
             defaultGateway.setText(tempNic.getDefaultGateway());
         }
+        defaultButton.setDisable(false);
+        applytButton.setDisable(false);
     }
 
+    public void nameEvent () {
+        tempNic.setDisplayName(name.getText());
+        defaultButton.setDisable(false);
+        applytButton.setDisable(false);
+    }
+
+
     public boolean isFormattedAsIp (String field) {
-        return true;
+        String temp = field;
+        int dotCount = 0;
+        int lastDot = -1;
+        for (int i = 0; i < temp.length(); i++) {
+            if (temp.charAt(i) == '.') {
+                dotCount++;
+                String subString = temp.substring(lastDot + 1, i);
+                if (!subString.matches("\\d+") && !subString.isBlank()) {
+                    return false;
+                } else {
+                    if (!subString.isBlank()) {
+                        if (Integer.parseInt(subString) > 255) {
+                            return false;
+                        }
+                    }
+                }
+                lastDot = i;
+            }
+        }
+        if (dotCount != 3) return false;
+        if (temp.substring(lastDot + 1).matches("\\d+") || temp.substring(lastDot + 1).isBlank()) {
+            if (!temp.substring(lastDot + 1).isBlank()) {
+                if (Integer.parseInt(temp.substring(lastDot + 1)) > 255) {
+                    return false;
+                }
+            }
+            return true;
+        } else return false;
     }
 
     public void defaultButtonEvent () {
         if (tempNic.getName() != null) {
             networkInterface.clone(tempNic, networkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
             setUiTo(tempNic);
+            defaultButton.setDisable(true);
+            applytButton.setDisable(true);
         }
     }
 
     public void revertButtonEvent () throws IOException {
         if (lastSetup.getName() != null) {
+            revertButton.setDisable(true);
             networkInterface.clone(tempNic, lastSetup);
             networkInterface.pushNIC(tempNic, NIC.getSelectionModel().getSelectedIndex());
             networkInterface.updateNIC(NIC.getSelectionModel().getSelectedIndex());
             setUiTo(networkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
+            defaultButton.setDisable(true);
+            applytButton.setDisable(true);
         }
     }
 
@@ -146,8 +203,12 @@ public class Controller {
     }
 
     public void applyButtonEvent () throws IOException {
+        networkInterface.clone(lastSetup, networkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
+        revertButton.setDisable(false);
         networkInterface.pushNIC(tempNic, NIC.getSelectionModel().getSelectedIndex());
         networkInterface.updateNIC(NIC.getSelectionModel().getSelectedIndex());
         setUiTo(networkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
+        defaultButton.setDisable(true);
+        applytButton.setDisable(true);
     }
 }

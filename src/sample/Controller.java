@@ -142,4 +142,9 @@ public class Controller {
         setIpFieldsEditable(!nic.isDhcp());
         name.setText(nic.getDisplayName());
     }
+
+    public void applyButtonEvent () throws IOException {
+        networkInterface.pushNIC(tempNic, NIC.getSelectionModel().getSelectedIndex());
+        networkInterface.updateNIC(NIC.getSelectionModel().getSelectedIndex());
+    }
 }

@@ -8,7 +8,7 @@
    <top>
    <GridPane alignment="center" hgap="10" nodeOrientation="LEFT_TO_RIGHT" vgap="10">
       <children>
-         <ComboBox fx:id="NIC" maxWidth="1.7976931348623157E308" minWidth="0.0" promptText="Select" visibleRowCount="20" GridPane.columnIndex="2" GridPane.columnSpan="4" GridPane.rowIndex="1" />
+         <ComboBox fx:id="NIC" maxWidth="1.7976931348623157E308" minWidth="0.0" onAction="#updateNicSettings" promptText="Select" visibleRowCount="20" GridPane.columnIndex="2" GridPane.columnSpan="4" GridPane.rowIndex="1" />
          <Label text="NIC:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
       </children>
          <columnConstraints>
@@ -32,10 +32,10 @@
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
         </columnConstraints>
         <rowConstraints>
@@ -47,15 +47,15 @@
             <Label text="IP:" GridPane.columnIndex="1" />
             <Label text="Subnet mask:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label text="Default gateway:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField GridPane.columnIndex="2" GridPane.halignment="CENTER" />
-            <TextField GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-            <TextField GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+            <TextField fx:id="IP" onAction="#ipEvent" onKeyPressed="#ipEvent" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
+            <TextField fx:id="subnetMask" onAction="#subnetMaskEvent" onKeyPressed="#subnetMaskEvent" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <TextField fx:id="defaultGateway" onAction="#DefaultGatewayEvent" onKeyPressed="#DefaultGatewayEvent" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
             <Label text="MAC:" GridPane.columnIndex="4" />
-            <TextField fx:id="macAdress" editable="false" GridPane.columnIndex="5" GridPane.halignment="CENTER" />
+            <TextField fx:id="macAdress" disable="true" editable="false" GridPane.columnIndex="5" GridPane.halignment="CENTER" />
             <Label text="DHCP:" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-            <CheckBox mnemonicParsing="false" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <CheckBox fx:id="dhcp" mnemonicParsing="false" onAction="#dhcpEvent" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
             <Label text="Name:" GridPane.columnIndex="4" GridPane.rowIndex="2" />
-            <TextField GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+            <TextField fx:id="name" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
          </children>
       </GridPane>
    </center>
@@ -77,8 +77,8 @@
         </rowConstraints>
          <children>
             <Button mnemonicParsing="false" prefWidth="60.0" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Button mnemonicParsing="false" prefWidth="60.0" text="Revert" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <Button mnemonicParsing="false" prefWidth="60.0" text="Default" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+            <Button mnemonicParsing="false" onAction="#revertButtonEvent" prefWidth="60.0" text="Revert" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <Button mnemonicParsing="false" onAction="#defaultButtonEvent" prefWidth="60.0" text="Default" GridPane.columnIndex="5" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </bottom>

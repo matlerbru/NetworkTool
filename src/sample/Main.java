@@ -20,7 +20,7 @@ public class Main extends Application {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
         Parent root = loader.load();
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle("Network interface controller settings");
         primaryStage.setScene(new Scene(root, 460, 220));
         primaryStage.show();
 

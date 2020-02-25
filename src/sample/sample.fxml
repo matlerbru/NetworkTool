@@ -6,19 +6,17 @@
 <BorderPane xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
 
    <top>
-   <GridPane alignment="center" hgap="10" nodeOrientation="LEFT_TO_RIGHT" vgap="10">
+   <GridPane alignment="center" nodeOrientation="LEFT_TO_RIGHT">
       <children>
-         <ComboBox fx:id="NIC" maxWidth="1.7976931348623157E308" minWidth="0.0" onAction="#updateNicSettings" promptText="Select" visibleRowCount="20" GridPane.columnIndex="2" GridPane.columnSpan="4" GridPane.rowIndex="1" />
-         <Label text="NIC:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+         <ComboBox fx:id="NIC" maxWidth="1.7976931348623157E308" minWidth="0.0" onAction="#updateNicSettings" promptText="Select" visibleRowCount="20" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+         <Label prefHeight="17.0" prefWidth="25.0" text="NIC:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
       </children>
          <columnConstraints>
-             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
+             <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
+             <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="100.0" />
              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" />
-             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
-             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
+             <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
+            <ColumnConstraints maxWidth="0.0" minWidth="0.0" prefWidth="0.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="5.0" />
@@ -30,13 +28,13 @@
    <center>
       <GridPane BorderPane.alignment="CENTER">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -60,15 +58,15 @@
       </GridPane>
    </center>
    <bottom>
-      <GridPane BorderPane.alignment="CENTER">
+      <GridPane prefWidth="220.0" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="160.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="2.0" prefWidth="0.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="2.0" prefWidth="0.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="2.0" prefWidth="5.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="10.0" prefWidth="60.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="2.0" prefWidth="10.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="10.0" prefWidth="60.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="1.0" prefWidth="10.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="10.0" prefWidth="60.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="5.0" vgrow="SOMETIMES" />

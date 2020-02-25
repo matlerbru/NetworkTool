@@ -234,6 +234,7 @@ public class networkInterface {
                         nic.IPaddress = line.replace("IPv4 Address. . . . . . . . . . . : ", "");
                         nic.IPaddress = nic.IPaddress.replace(" ", "");
                         nic.IPaddress = nic.IPaddress.replace("(Preferred)", "");
+                        nic.IPaddress = nic.IPaddress.replace("(Tentative)", "");
                     }
 
                     if (line.contains("Subnet Mask . . . . . . . . . . . : ")) {

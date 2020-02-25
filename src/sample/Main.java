@@ -21,8 +21,17 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
         Parent root = loader.load();
         primaryStage.setTitle("Network interface controller settings");
-        primaryStage.setScene(new Scene(root, 460, 220));
+        primaryStage.setScene(new Scene(root, 460, 180));
+        primaryStage.setMinHeight(220);
+        primaryStage.setMinWidth(460);
+        primaryStage.setMaxHeight(220);
+        primaryStage.setMaxWidth(460);
         primaryStage.show();
+
+
+
+
+
 
         Controller controller = loader.<Controller>getController();
 

@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.shape.Box;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.MathContext;
 
@@ -14,6 +15,7 @@ public class Controller {
 
     networkInterface.NIC tempNic = new networkInterface.NIC();
     networkInterface.NIC lastSetup = new networkInterface.NIC();
+    Profile profile = new Profile();
     private boolean lastSetupSet = true;
 
     @FXML
@@ -46,15 +48,29 @@ public class Controller {
     @FXML
     private Button applytButton;
 
+    @FXML
+    private ListView profileSelect;
+
+
     public void initialize () {
-        setNicData();
+        try {
+            setNicData();
+        } catch (Exception e) {
+
+        }
+
     }
 
-    public void setNicData() {
+    public void setNicData() throws IOException {
         NIC.getItems().clear();
         for (int i = 0; i < networkInterface.NIC.size(); i++) {
             NIC.getItems().add(networkInterface.NIC.get(i).getName());
         }
+
+        networkInterface.NIC nicTest = new networkInterface.NIC();
+        nicTest.setDisplayName("testtest");
+        profileSelect.getItems().add("suck");
+        profile.saveProfileToFile(new File("testFile.xml"), nicTest, "nameTest");
     }
 
     public void updateNicSettings () {

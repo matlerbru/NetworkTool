@@ -11,7 +11,11 @@ import java.net.*;
 import java.util.*;
 import static java.lang.System.out;
 
+
 public class Main extends Application {
+
+    static final int WINDOW_WIDTH = 480;
+    static final int WINDOW_HEIGHT = 180;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -21,11 +25,8 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
         Parent root = loader.load();
         primaryStage.setTitle("Network interface controller settings");
-        primaryStage.setScene(new Scene(root, 460, 180));
-        primaryStage.setMinHeight(220);
-        primaryStage.setMinWidth(460);
-        primaryStage.setMaxHeight(220);
-        primaryStage.setMaxWidth(460);
+        primaryStage.setScene(new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT));
+
         primaryStage.show();
 
 
@@ -34,8 +35,6 @@ public class Main extends Application {
 
 
         Controller controller = loader.<Controller>getController();
-
-        controller.initialize();
 
     }
 

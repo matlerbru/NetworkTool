@@ -8,10 +8,11 @@
    <top>
    <GridPane alignment="center" nodeOrientation="LEFT_TO_RIGHT">
       <children>
-         <ComboBox fx:id="NIC" maxWidth="1.7976931348623157E308" minWidth="0.0" onAction="#updateNicSettings" promptText="Select" visibleRowCount="20" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-         <Label prefHeight="17.0" prefWidth="25.0" text="NIC:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+         <ComboBox fx:id="NIC" maxWidth="1.7976931348623157E308" minWidth="0.0" onAction="#updateNicSettings" promptText="Select" visibleRowCount="20" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+         <Label prefHeight="17.0" prefWidth="25.0" text="NIC:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
       </children>
          <columnConstraints>
+             <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="220.0" />
              <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
              <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="100.0" />
              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -60,6 +61,12 @@
    <bottom>
       <GridPane prefWidth="220.0" BorderPane.alignment="CENTER">
         <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="10.0" prefWidth="60.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="2.0" prefWidth="10.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="10.0" prefWidth="60.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="1.0" prefWidth="10.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="10.0" prefWidth="60.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="160.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="10.0" prefWidth="60.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="2.0" prefWidth="10.0" />
@@ -74,11 +81,17 @@
           <RowConstraints minHeight="10.0" prefHeight="5.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="applytButton" disable="true" mnemonicParsing="false" onAction="#applyButtonEvent" prefWidth="60.0" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Button fx:id="revertButton" disable="true" mnemonicParsing="false" onAction="#revertButtonEvent" prefWidth="60.0" text="Revert" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <Button fx:id="defaultButton" disable="true" mnemonicParsing="false" onAction="#defaultButtonEvent" prefWidth="60.0" text="Default" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+            <Button fx:id="applytButton" disable="true" mnemonicParsing="false" onAction="#applyButtonEvent" prefWidth="60.0" text="Apply" GridPane.columnIndex="7" GridPane.rowIndex="1" />
+            <Button fx:id="revertButton" disable="true" mnemonicParsing="false" onAction="#revertButtonEvent" prefWidth="60.0" text="Revert" GridPane.columnIndex="9" GridPane.rowIndex="1" />
+            <Button fx:id="defaultButton" disable="true" mnemonicParsing="false" onAction="#defaultButtonEvent" prefWidth="60.0" text="Default" GridPane.columnIndex="11" GridPane.rowIndex="1" />
+            <Button fx:id="loadProfile" mnemonicParsing="false" onAction="#loadProfileButtonEvent" prefWidth="60.0" text="Load" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button fx:id="addProfile" mnemonicParsing="false" onAction="#AddProfileButtonEvent" prefWidth="60.0" text="Add" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <Button fx:id="removeProfile" mnemonicParsing="false" onAction="#deleteProfileButtonEvent" prefWidth="60.0" text="Delete" GridPane.columnIndex="5" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </bottom>
+   <left>
+      <ListView fx:id="profileSelect" prefHeight="200.0" prefWidth="220.0" BorderPane.alignment="CENTER" />
+   </left>
 
 </BorderPane>

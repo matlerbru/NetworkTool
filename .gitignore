@@ -19,9 +19,6 @@
 .idea/gradle.xml
 .idea/libraries
 
-# Mongo Explorer plugin:
-.idea/mongoSettings.xml
-
 ## File-based project format:
 *.iws
 
@@ -29,3 +26,9 @@
 
 # IntelliJ
 /out/
+
+#Executable build
+launch4jSetup.xml
+
+#Userdata
+profile.xml

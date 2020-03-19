@@ -10,12 +10,13 @@ import javafx.scene.shape.Box;
 import java.io.File;
 import java.io.IOException;
 import java.math.MathContext;
+import java.util.Optional;
 
 public class Controller {
 
     networkInterface.NIC tempNic = new networkInterface.NIC();
     networkInterface.NIC lastSetup = new networkInterface.NIC();
-    Profile profile = new Profile();
+    ProfileContainer profile = new ProfileContainer();
     private boolean lastSetupSet = true;
 
     @FXML
@@ -51,6 +52,15 @@ public class Controller {
     @FXML
     private ListView profileSelect;
 
+    @FXML
+    private Button addProfile;
+
+    @FXML
+    private Button removeProfile;
+
+    @FXML
+    private Button loadProfile;
+
 
     public void initialize () {
         try {
@@ -66,11 +76,6 @@ public class Controller {
         for (int i = 0; i < networkInterface.NIC.size(); i++) {
             NIC.getItems().add(networkInterface.NIC.get(i).getName());
         }
-
-        networkInterface.NIC nicTest = new networkInterface.NIC();
-        nicTest.setDisplayName("testtest");
-        profileSelect.getItems().add("suck");
-        profile.saveProfileToFile(new File("testFile.xml"), nicTest, "nameTest");
     }
 
     public void updateNicSettings () {
@@ -114,9 +119,6 @@ public class Controller {
     public void dhcpEvent () {
         setIpFieldsEditable(!dhcp.isSelected());
         tempNic.setDhcp(dhcp.isSelected());
-        networkInterface.printNIC(tempNic);
-
-        networkInterface.printNIC(tempNic);
         defaultButton.setDisable(false);
         applytButton.setDisable(false);
     }
@@ -210,12 +212,16 @@ public class Controller {
         }
     }
 
-    public void setUiTo (networkInterface.NIC nic) {
+    public void setUiTo (networkInterface.NIC nic, boolean updateName) {
         networkInterface.clone(tempNic, nic);
         dhcp.setSelected(nic.isDhcp());
         setIpFieldsEditable(!nic.isDhcp());
-        name.setText(nic.getDisplayName());
+        if (updateName) name.setText(nic.getDisplayName());
         macAdress.setText(nic.getMAC());
+    }
+
+    public void setUiTo (networkInterface.NIC nic) {
+        setUiTo(nic, true);
     }
 
     public void applyButtonEvent () throws IOException {
@@ -226,5 +232,33 @@ public class Controller {
         setUiTo(networkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
         defaultButton.setDisable(true);
         applytButton.setDisable(true);
+    }
+
+    public void AddProfileButtonEvent () throws IOException {
+        TextInputDialog dialog = new TextInputDialog("Enter profile name.");
+        dialog.setTitle("Enter profile name");
+        dialog.setContentText("Name:");
+
+        Optional<String> result = dialog.showAndWait();
+        System.out.println(result.get());
+        profile.addProfile(tempNic, result.get());
+        profileSelect.getItems().add(result.get());
+        ProfileContainer.saveProfileToFile("profile.xml", tempNic, result.get());
+    }
+
+    public void deleteProfileButtonEvent () {
+        int index = profileSelect.getSelectionModel().getSelectedIndex();
+        profile.removeProfile(index);
+        profileSelect.getItems().remove(index);
+
+        //Remove from file also!!!! TODO
+    }
+
+    public void loadProfileButtonEvent () {
+        int index = profileSelect.getSelectionModel().getSelectedIndex();
+        if (index >= 0) {
+            System.out.println(index);
+            setUiTo(profile.getProfile(index), false);
+        }
     }
 }

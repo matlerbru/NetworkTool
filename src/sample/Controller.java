@@ -256,9 +256,12 @@ public class Controller {
 
     public void deleteProfileButtonEvent () throws IOException {
         int index = profileSelect.getSelectionModel().getSelectedIndex();
-        profile.removeProfile(index);
-        profileSelect.getItems().remove(index);
-        ProfileContainer.removeProfileFromFile(".Profile.xml", index);
+        if (index >= 0) {
+            profile.removeProfile(index);
+            profileSelect.getItems().remove(index);
+            ProfileContainer.removeProfileFromFile(".Profile.xml", index);
+        }
+
     }
 
     public void loadProfileButtonEvent () {

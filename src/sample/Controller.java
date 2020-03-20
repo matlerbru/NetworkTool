@@ -247,11 +247,15 @@ public class Controller {
         dialog.setTitle("Enter profile name");
         dialog.setContentText("Name:");
 
+
         Optional<String> result = dialog.showAndWait();
-        System.out.println(result.get());
-        profile.addProfile(tempNic, result.get());
-        profileSelect.getItems().add(result.get());
-        ProfileContainer.saveProfileToFile(".profile.xml", tempNic, result.get());
+        try {
+            profileSelect.getItems().add(result.get());
+            profile.addProfile(tempNic, result.get());
+            ProfileContainer.saveProfileToFile(".profile.xml", tempNic, result.get());
+        } catch (Exception e) {
+
+        }
     }
 
     public void deleteProfileButtonEvent () throws IOException {

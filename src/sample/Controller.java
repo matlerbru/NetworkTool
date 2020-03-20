@@ -10,6 +10,10 @@ import javafx.scene.shape.Box;
 import java.io.File;
 import java.io.IOException;
 import java.math.MathContext;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 public class Controller {
@@ -65,6 +69,10 @@ public class Controller {
     public void initialize () {
         try {
             setNicData();
+            updateProfileFromFile(".Profile.xml");
+            Path path = Paths.get(".Profile.xml");
+            Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+
         } catch (Exception e) {
 
         }
@@ -243,15 +251,14 @@ public class Controller {
         System.out.println(result.get());
         profile.addProfile(tempNic, result.get());
         profileSelect.getItems().add(result.get());
-        ProfileContainer.saveProfileToFile("profile.xml", tempNic, result.get());
+        ProfileContainer.saveProfileToFile(".profile.xml", tempNic, result.get());
     }
 
-    public void deleteProfileButtonEvent () {
+    public void deleteProfileButtonEvent () throws IOException {
         int index = profileSelect.getSelectionModel().getSelectedIndex();
         profile.removeProfile(index);
         profileSelect.getItems().remove(index);
-
-        //Remove from file also!!!! TODO
+        ProfileContainer.removeProfileFromFile(".Profile.xml", index);
     }
 
     public void loadProfileButtonEvent () {
@@ -261,4 +268,47 @@ public class Controller {
             setUiTo(profile.getProfile(index), false);
         }
     }
+
+    private void updateProfileFromFile (String fileName) throws IOException {
+        ProfileContainer.Profiles profiles = new ProfileContainer.Profiles();
+        profiles = ProfileContainer.loadProfilesFromFile(fileName);
+        for (int i = 0; i < profiles.size(); i++) {
+
+            profile.addProfile(profiles.getNic(i), profiles.getProfileName(i));
+            profileSelect.getItems().add(profiles.getProfileName(i));
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

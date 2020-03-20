@@ -14,8 +14,8 @@ import static java.lang.System.out;
 
 public class Main extends Application {
 
-    static final int WINDOW_WIDTH = 480;
-    static final int WINDOW_HEIGHT = 180;
+    static final int WINDOW_WIDTH = 660;
+    static final int WINDOW_HEIGHT = 220;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -35,6 +35,8 @@ public class Main extends Application {
 
 
         Controller controller = loader.<Controller>getController();
+
+        ProfileContainer.loadProfilesFromFile(".profile.xml");
 
     }
 

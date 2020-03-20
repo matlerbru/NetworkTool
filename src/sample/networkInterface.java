@@ -92,6 +92,10 @@ public class networkInterface {
             this.defaultGateway = defaultGateway;
         }
 
+        public void setName(String name) {
+            this.name = name;
+        }
+
         public void printNIC(NIC nic) {
             System.out.println("Display name: " + this.displayName);
             System.out.println("Name: " + this.name);

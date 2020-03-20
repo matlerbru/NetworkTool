@@ -27,8 +27,6 @@
 # IntelliJ
 /out/
 
-#Executable build
-launch4jSetup.xml
 
 #Userdata
 .profile.xml

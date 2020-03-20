@@ -14,8 +14,8 @@ import static java.lang.System.out;
 
 public class Main extends Application {
 
-    static final int WINDOW_WIDTH = 660;
-    static final int WINDOW_HEIGHT = 220;
+    static final int WINDOW_WIDTH = 630;
+    static final int WINDOW_HEIGHT = 200;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -28,11 +28,6 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT));
 
         primaryStage.show();
-
-
-
-
-
 
         Controller controller = loader.<Controller>getController();
 

@@ -332,12 +332,8 @@ public class networkInterface {
         while ((line = readerIp.readLine()) != null) {
             System.out.println(line);
         }
-
-
         BufferedReader readerName = new BufferedReader(new InputStreamReader(processName.getInputStream()));
-
         line = null;
-
         System.out.println();
         while ((line = readerName.readLine()) != null) {
             System.out.println(line);

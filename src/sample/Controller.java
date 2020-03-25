@@ -76,10 +76,9 @@ public class Controller {
         } catch (Exception e) {
 
         }
-
     }
 
-    public void setNicData() throws IOException {
+    public void setNicData() {
         NIC.getItems().clear();
         for (int i = 0; i < networkInterface.NIC.size(); i++) {
             NIC.getItems().add(networkInterface.NIC.get(i).getName());
@@ -117,9 +116,15 @@ public class Controller {
                 subnetMask.setText(networkInterface.NIC.get( index ).getSubnetMask());
                 defaultGateway.setText(networkInterface.NIC.get( index ).getDefaultGateway());
             } else {
-                IP.setText(tempNic.getIPaddress());
-                subnetMask.setText(tempNic.getSubnetMask());
-                defaultGateway.setText(tempNic.getDefaultGateway());
+                if (!isFormattedAsIp(tempNic.getIPaddress())) {
+                    IP.setText("0.0.0.0");
+                } else IP.setText(tempNic.getIPaddress());
+                if (!isFormattedAsIp(tempNic.getSubnetMask())) {
+                    subnetMask.setText("0.0.0.0");
+                } else subnetMask.setText(tempNic.getSubnetMask());
+                if (!isFormattedAsIp(tempNic.getDefaultGateway())) {
+                    defaultGateway.setText("0.0.0.0");
+                } else defaultGateway.setText(tempNic.getDefaultGateway());
             }
         }
     }
@@ -134,7 +139,9 @@ public class Controller {
     public void ipEvent () {
         if (isFormattedAsIp(IP.getText()))  {
             tempNic.setIPaddress(IP.getText());
-        } else {
+        } else if (IP.getText().length() < 7) {
+            IP.setText("0.0.0.0");
+        }else {
             IP.setText(tempNic.getIPaddress());
         }
         defaultButton.setDisable(false);
@@ -144,7 +151,9 @@ public class Controller {
     public void subnetMaskEvent () {
         if (isFormattedAsIp(subnetMask.getText()))  {
             tempNic.setSubnetMask(subnetMask.getText());
-        } else {
+        } else if (subnetMask.getText().length() < 7) {
+            subnetMask.setText("0.0.0.0");
+        }else {
             subnetMask.setText(tempNic.getSubnetMask());
         }
         defaultButton.setDisable(false);
@@ -152,8 +161,10 @@ public class Controller {
     }
 
     public void DefaultGatewayEvent () {
-        if (isFormattedAsIp(defaultGateway.getText()))  {
+        if (isFormattedAsIp(defaultGateway.getText())) {
             tempNic.setDefaultGateway(defaultGateway.getText());
+        } else if (defaultGateway.getText().length() < 7) {
+            defaultGateway.setText("0.0.0.0");
         } else {
             defaultGateway.setText(tempNic.getDefaultGateway());
         }
@@ -172,31 +183,36 @@ public class Controller {
         String temp = field;
         int dotCount = 0;
         int lastDot = -1;
-        for (int i = 0; i < temp.length(); i++) {
-            if (temp.charAt(i) == '.') {
-                dotCount++;
-                String subString = temp.substring(lastDot + 1, i);
-                if (!subString.matches("\\d+") && !subString.isBlank()) {
-                    return false;
-                } else {
-                    if (!subString.isBlank()) {
-                        if (Integer.parseInt(subString) > 255) {
-                            return false;
+        try {
+            for (int i = 0; i < temp.length(); i++) {
+                if (temp.charAt(i) == '.') {
+                    dotCount++;
+                    String subString = temp.substring(lastDot + 1, i);
+                    if (!subString.matches("\\d+") && !subString.isBlank()) {
+                        return false;
+                    } else {
+                        if (!subString.isBlank()) {
+                            if (Integer.parseInt(subString) > 255) {
+                                return false;
+                            }
                         }
                     }
+                    lastDot = i;
                 }
-                lastDot = i;
             }
+            if (dotCount != 3) return false;
+            if (temp.substring(lastDot + 1).matches("\\d+") || temp.substring(lastDot + 1).isBlank()) {
+                if (!temp.substring(lastDot + 1).isBlank()) {
+                    if (Integer.parseInt(temp.substring(lastDot + 1)) > 255) {
+                        return false;
+                    }
+                }
+                return true;
+            } else return false;
+        } catch (Exception e) {
+            return false;
         }
-        if (dotCount != 3) return false;
-        if (temp.substring(lastDot + 1).matches("\\d+") || temp.substring(lastDot + 1).isBlank()) {
-            if (!temp.substring(lastDot + 1).isBlank()) {
-                if (Integer.parseInt(temp.substring(lastDot + 1)) > 255) {
-                    return false;
-                }
-            }
-            return true;
-        } else return false;
+
     }
 
     public void defaultButtonEvent () {
@@ -265,7 +281,6 @@ public class Controller {
             profileSelect.getItems().remove(index);
             ProfileContainer.removeProfileFromFile(".Profile.xml", index);
         }
-
     }
 
     public void loadProfileButtonEvent () {
@@ -286,36 +301,3 @@ public class Controller {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

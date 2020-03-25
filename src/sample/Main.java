@@ -11,6 +11,8 @@ import java.net.*;
 import java.util.*;
 import static java.lang.System.out;
 
+//Profiles can have duplicate names, fix.
+//Lab bedre exceptions
 
 public class Main extends Application {
 
@@ -19,26 +21,19 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
         networkInterface.updateNIC();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
         Parent root = loader.load();
         primaryStage.setTitle("Network interface controller settings");
         primaryStage.setScene(new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT));
-
         primaryStage.show();
-
         Controller controller = loader.<Controller>getController();
-
         ProfileContainer.loadProfilesFromFile(".profile.xml");
-
     }
-
 
     public static void main(String[] args) {
-
         launch(args);
-
     }
+
 }

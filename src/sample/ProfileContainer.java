@@ -19,10 +19,8 @@ public class ProfileContainer {
 
     public void addProfile(networkInterface.NIC nic, String name) {
         if (this.name.contains(name)) {
-            System.out.println("false");
             throw new IllegalArgumentException("Duplicate profile name");
         } else {
-            System.out.println("true");
             networkInterface.NIC temp = new networkInterface.NIC();
             networkInterface.clone(temp, nic);
             this.nic.add(temp);

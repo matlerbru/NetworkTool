@@ -9,6 +9,7 @@ import javafx.scene.shape.Box;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.math.MathContext;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -262,8 +263,6 @@ public class Controller {
         TextInputDialog dialog = new TextInputDialog("Enter profile name.");
         dialog.setTitle("Enter profile name");
         dialog.setContentText("Name:");
-
-
         Optional<String> result = dialog.showAndWait();
         try {
             profile.addProfile(tempNic, result.get().trim());
@@ -274,6 +273,7 @@ public class Controller {
             errorAlert.setHeaderText("Duplicate name");
             errorAlert.setContentText("please try again with another name");
             errorAlert.showAndWait();
+        } catch (RuntimeException e) {
         }
     }
 

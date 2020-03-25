@@ -18,10 +18,16 @@ public class ProfileContainer {
     private ArrayList<String> name = new ArrayList<String>();
 
     public void addProfile(networkInterface.NIC nic, String name) {
-        networkInterface.NIC temp = new networkInterface.NIC();
-        networkInterface.clone(temp, nic);
-        this.nic.add(temp);
-        this.name.add(name);
+        if (this.name.contains(name)) {
+            System.out.println("false");
+            throw new IllegalArgumentException("Duplicate profile name");
+        } else {
+            System.out.println("true");
+            networkInterface.NIC temp = new networkInterface.NIC();
+            networkInterface.clone(temp, nic);
+            this.nic.add(temp);
+            this.name.add(name);
+        }
     }
 
     public networkInterface.NIC getProfile(int index) {

@@ -11,7 +11,6 @@ import java.net.*;
 import java.util.*;
 import static java.lang.System.out;
 
-//Profiles can have duplicate names, fix.
 //Lab bedre exceptions
 
 public class Main extends Application {

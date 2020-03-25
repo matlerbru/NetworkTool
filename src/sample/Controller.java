@@ -266,11 +266,14 @@ public class Controller {
 
         Optional<String> result = dialog.showAndWait();
         try {
+            profile.addProfile(tempNic, result.get().trim());
             profileSelect.getItems().add(result.get());
-            profile.addProfile(tempNic, result.get());
             ProfileContainer.saveProfileToFile(".profile.xml", tempNic, result.get());
-        } catch (Exception e) {
-
+        } catch (IllegalArgumentException e) {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("Duplicate name");
+            errorAlert.setContentText("please try again with another name");
+            errorAlert.showAndWait();
         }
     }
 

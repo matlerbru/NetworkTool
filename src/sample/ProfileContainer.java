@@ -216,12 +216,9 @@ public class ProfileContainer {
                 try {
                     if (!tempFile.exists()) {
                         createFile(tempFile.getName(), false);
-                    } else {
-                        tempFile.delete();
-                        createFile(tempFile.getName(), false);
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+
                 }
 
                 PrintStream fileWriter = null;

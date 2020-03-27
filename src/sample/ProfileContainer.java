@@ -183,8 +183,6 @@ public class ProfileContainer {
                     temp = temp.replace("</defaultGateway>", "");
                     tempNic.setDefaultGateway(temp);
                 }
-
-                System.out.println();
             }
         }
         fileReader.close();

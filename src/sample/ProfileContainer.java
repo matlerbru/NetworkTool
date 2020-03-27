@@ -51,7 +51,12 @@ public class ProfileContainer {
 
     public static void saveProfileToFile(String fileName, networkInterface.NIC nic, String name) throws IOException {
 
-        createFile(fileName);
+
+        File file = new File(fileName);
+
+        if (!file.exists()) {
+            createFile(fileName);
+        }
 
         PrintStream fileWriter = new PrintStream(new FileOutputStream(fileName, true));
 
@@ -76,19 +81,19 @@ public class ProfileContainer {
     private static void createFile(String fileName, boolean header) throws IOException {
         File file = new File(fileName);
         boolean fileCreated = file.createNewFile();
-
-        PrintStream fileWriter = new PrintStream(new FileOutputStream(fileName, true));
-
-        if (fileCreated) {
+        if  (fileCreated) {
+            PrintStream fileWriter = new PrintStream(new FileOutputStream(fileName, true));
             System.out.println("File created: " + fileName);
             if (header) {
                 fileWriter.println("<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>");
                 fileWriter.println();
             }
-        }
-        fileWriter.flush();
-        fileWriter.close();
+
+            fileWriter.flush();
+            fileWriter.close();
+        } else throw new IOException("File already existing: " + fileName);
     }
+
 
     private static void createFile(String fileName) throws IOException {
         createFile(fileName, true);
@@ -121,9 +126,12 @@ public class ProfileContainer {
 
     public static Profiles loadProfilesFromFile(String fileName) throws IOException {
 
-        createFile(fileName);
-
         File file = new File(fileName);
+
+        if (!file.exists()) {
+            createFile(fileName);
+        }
+
         Scanner fileReader = new Scanner(file);
 
         Profiles profiles = new Profiles();
@@ -183,10 +191,15 @@ public class ProfileContainer {
         return profiles;
     }
 
-    public static void removeProfileFromFile(String fileName, int index) throws IOException {createFile(fileName);
+    public static void removeProfileFromFile(String fileName, int index) {
 
         File file = new File(fileName);
-        Scanner fileReader = new Scanner(file);
+        Scanner fileReader = null;
+        try {
+            fileReader = new Scanner(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         File tempFile = new File("temp" + fileName);
 
@@ -200,8 +213,23 @@ public class ProfileContainer {
             if (line.contains("<profile>")) readingIndex++;
 
             if (!(readingIndex == index)) {
-                createFile(tempFile.getName(), false);
-                PrintStream fileWriter = new PrintStream(new FileOutputStream(tempFile, true));
+                try {
+                    if (!tempFile.exists()) {
+                        createFile(tempFile.getName(), false);
+                    } else {
+                        tempFile.delete();
+                        createFile(tempFile.getName(), false);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                PrintStream fileWriter = null;
+                try {
+                    fileWriter = new PrintStream(new FileOutputStream(tempFile, true));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
                 fileWriter.println(line);
                 fileWriter.close();
             }
@@ -210,8 +238,13 @@ public class ProfileContainer {
         fileReader.close();
         Path path = Paths.get(fileName);
         Path tempPath = Paths.get(tempFile.getName());
-        Files.delete(path);
-        Files.move(tempPath, tempPath.resolveSibling(fileName));
-        Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+        try {
+            Files.delete(path);
+            Files.move(tempPath, tempPath.resolveSibling(fileName));
+            Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
  }

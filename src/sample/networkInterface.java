@@ -59,7 +59,6 @@ public class networkInterface {
             return MAC;
         }
 
-
         public String getIPaddress() {
             return IPaddress;
         }

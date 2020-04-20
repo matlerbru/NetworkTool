@@ -11,28 +11,28 @@ import java.net.*;
 import java.util.*;
 import static java.lang.System.out;
 
-//Lab bedre exceptions
-
 public class Main extends Application {
 
     static final int WINDOW_WIDTH = 630;
-    static final int WINDOW_HEIGHT = 200;
+    static final int WINDOW_HEIGHT = 225;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        networkInterface.updateNIC();
+        sample.networkInterface.updateNIC();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
         Parent root = loader.load();
         primaryStage.setTitle("Network interface controller settings");
         primaryStage.setScene(new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT));
         primaryStage.show();
-        Controller controller = loader.<Controller>getController();
-        ProfileContainer.loadProfilesFromFile(".profile.xml");
+        sample.Controller controller = loader.<sample.Controller>getController();
+        sample.ProfileContainer.loadProfilesFromFile(".profile.xml");
     }
 
     public static void main(String[] args) {
         launch(args);
     }
+
+
 
 }

@@ -16,6 +16,8 @@ import java.net.InetAddress;
 import java.util.LinkedList;
 import java.util.Scanner;
 
+import static java.lang.Thread.sleep;
+
 public class NetworkScanner {
 
     ObservableList<networkLocation> data;
@@ -29,6 +31,8 @@ public class NetworkScanner {
         } catch (Exception e) {
         }
         initTable();
+
+        queue = new QueueSemaphore(10);
     }
 
     void initTable() {
@@ -48,6 +52,9 @@ public class NetworkScanner {
         data = FXCollections.observableArrayList();
         networkLocationTable.setItems(data);
     }
+
+
+    private QueueSemaphore queue;
 
 
     @FXML
@@ -287,32 +294,41 @@ public class NetworkScanner {
 
         private void scanNetwork(NetworkInterface.NIC nic) throws IOException {
         boolean noConnection = true;
+
         try {
             for (int i = Integer.parseInt(rangeMin.getText()); i <= Integer.parseInt(rangeMax.getText()); i++) {
-                try {
-                    if (!scanInProgress) throw new IllegalStateException();
-                    String address = nic.getIPaddress().substring(0, ordinalIndexOf(nic.getIPaddress(), ".", 3) + 1);
-                    address = address + i;
-                    InetAddress ip = InetAddress.getByName(address);
-                    if (ip.isReachable(Integer.parseInt(timeout.getText()))) {
-                        String name = ip.getHostName();
-                        if (name.equals(address)) {
-                            name = null;
-                        }
-                        String macAddr = getMacFromArpTable(address, nic);
-                        String manufacturer = getManufacturer(macAddr);
-                        if (!address.equals(nic.getIPaddress())) {
-                            networkLocation networkLocation = new networkLocation(name, address, macAddr, manufacturer);
-                            data.add(networkLocation);
-                        }
-                    }
-                    progress = (i - Integer.parseInt(rangeMin.getText())) / Double.valueOf(Integer.parseInt(rangeMax.getText()) - Integer.parseInt(rangeMin.getText()));
-                    noConnection = false;
-                } catch (IllegalStateException e) {
-                    break;
-                } catch (Exception e) {
-                    progress = -1.0;
+
+
+                while (!queue.tryLogin()) {
+                    sleep(10);
                 }
+
+                    try {
+                        if (!scanInProgress) throw new IllegalStateException();
+                        String address = nic.getIPaddress().substring(0, ordinalIndexOf(nic.getIPaddress(), ".", 3) + 1);
+                        address = address + i;
+                        InetAddress ip = InetAddress.getByName(address);
+                        if (ip.isReachable(Integer.parseInt(timeout.getText()))) {
+                            String name = ip.getHostName();
+                            if (name.equals(address)) {
+                                name = null;
+                            }
+                            String macAddr = getMacFromArpTable(address, nic);
+                            String manufacturer = getManufacturer(macAddr);
+                            if (!address.equals(nic.getIPaddress())) {
+                                networkLocation networkLocation = new networkLocation(name, address, macAddr, manufacturer);
+                                data.add(networkLocation);
+                            }
+                        }
+                        progress = (i - Integer.parseInt(rangeMin.getText())) / Double.valueOf(Integer.parseInt(rangeMax.getText()) - Integer.parseInt(rangeMin.getText()));
+                        noConnection = false;
+                    } catch (IllegalStateException e) {
+                        break;
+                    } catch (Exception e) {
+                        progress = -1.0;
+                    }
+                    queue.logout();
+
             }
             if (noConnection) {
                 progress = -1.0;

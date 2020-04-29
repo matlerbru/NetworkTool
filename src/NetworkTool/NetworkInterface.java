@@ -103,6 +103,7 @@ public class NetworkInterface {
 
 
     public static void updateNIC() throws IOException {
+
         NIC.clear();
 
         ProcessBuilder pb = new ProcessBuilder();

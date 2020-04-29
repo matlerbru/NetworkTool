@@ -74,29 +74,6 @@ public class NicTool {
             Path path = Paths.get(".Profile.xml");
             Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
 
-            Thread updateNicService = new Thread() {
-                @Override
-                public void run() {
-                    int nicAmount = NetworkInterface.NIC.size();
-                    while (true) {
-                        try {
-                            if (NetworkInterface.NIC.size() != nicAmount) {
-                                String selectedNic = NIC.getSelectionModel().getSelectedItem();
-                                setNicData();
-                                NIC.getSelectionModel().select(selectedNic);
-                            }
-                            Thread.sleep(1000);
-                            try {
-                                NetworkInterface.updateNIC();
-                            } catch (IOException e) {
-                            }
-                            nicAmount = NetworkInterface.NIC.size();
-                        } catch (InterruptedException e) {
-                        }
-                    }
-                }
-            };
-            updateNicService.start();
         } catch (Exception e) {
         }
     }

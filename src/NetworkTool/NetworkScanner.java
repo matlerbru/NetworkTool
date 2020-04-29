@@ -1,7 +1,4 @@
 package NetworkTool;
-//Github te
-
-
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -116,7 +113,7 @@ public class NetworkScanner {
         }
     }
 
-    private boolean scanInProgress;
+    private volatile boolean scanInProgress;
 
     public void setNicData() {
         NIC.getItems().clear();
@@ -136,7 +133,6 @@ public class NetworkScanner {
                 LinkedList<NetworkScannerService> scanners = new LinkedList<NetworkScannerService>();
                 LinkedList<Thread> scans = new LinkedList<Thread>();
 
-
                 for (int i = 0; i < NetworkInterface.NIC.size(); i++) {
                     NetworkScannerService scanner = new NetworkScannerService();
                     Thread scan = scanner.scan(i);
@@ -145,28 +141,6 @@ public class NetworkScanner {
                     scans.add(scan);
                     scans.get(i).start();
                 }
-
-                System.out.println("All threads started");
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                 new Thread() {
                     @Override
@@ -180,47 +154,47 @@ public class NetworkScanner {
                                 progressBar.setVisible(true);
                             }
                         });
-                        System.out.println("button and progress bar set");
-                        boolean allThreadsIsDone;
+
+                        boolean threadRunningAtStartSet = false;
+                        int threadsRunningAtStart = 0;
                         while(true) {
-                            System.out.println("while");
                             try {
                                 sleep(100);
                             } catch (InterruptedException e) {
                             }
 
-                            System.out.println("slept");
-
-
-                            allThreadsIsDone = true;
-                            try {
-                                for (int i = 0; i <= NetworkInterface.NIC.size() - 1; i++) {
-                                    System.out.println("NetworkInterface.NIC.size():" + NetworkInterface.NIC.size());
-                                    try {
-                                        double progress = scanners.get(i).getProgress();
-                                        if (!scanners.get(i).isThreadIsDone()) {
-                                            System.out.println("Thread is alive: ");
-                                            allThreadsIsDone = false;
-                                        }
-                                    } catch (Exception e) {
-
-                                        System.out.println("exception: scanners.get(" + i + ")");
-                                    }
+                            int threadsRunning = 0;
+                            for (int i = 0; i <= NetworkInterface.NIC.size() - 1; i++) {
+                                if (scans.get(i).isAlive()) {
+                                    threadsRunning++;
                                 }
-                            } catch (Exception e) {
-                                System.out.println("Exception in for loop");
+                            }
+                            if (!threadRunningAtStartSet) {
+                                threadsRunningAtStart = threadsRunning;
+                                threadRunningAtStartSet = true;
                             }
 
-
-                            System.out.println("allThreadsIsDead: " + allThreadsIsDone);
-                            if (allThreadsIsDone) {
+                            if (threadsRunning == 0) {
                                 break;
                             }
+
+
+
+                            double progress = 0;
+                            for (int i = 0; i <= NetworkInterface.NIC.size() - 1; i++) {
+                                if (scanners.get(i).getProgress() != -1.0) {
+                                    progress = progress + scanners.get(i).getProgress();
+                                }
+                            }
+
+                            final double finalProgress = progress / threadsRunningAtStart;
+                            System.out.println(finalProgress);
 
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    progressBar.setProgress(scanners.get(6).getProgress());
+                                    progressBar.setProgress(finalProgress);
+                                    System.out.println(finalProgress);
                                 }
                             });
                         }
@@ -235,20 +209,8 @@ public class NetworkScanner {
                         scanInProgress = false;
                         System.out.println("Stop button set");
 
-
                     }
                 }.start();
-
-
-
-
-
-
-
-
-
-
-
 
             } else {
                 NetworkScannerService scanner = new NetworkScannerService();
@@ -323,15 +285,13 @@ public class NetworkScanner {
             return progress;
         };
 
-        public boolean isThreadIsDone() {
-            return threadIsDone;
-        }
-
         private void scanNetwork(NetworkInterface.NIC nic) throws IOException {
+        boolean noConnection = true;
         try {
             for (int i = Integer.parseInt(rangeMin.getText()); i <= Integer.parseInt(rangeMax.getText()); i++) {
                 try {
-                    String address = nic.getIPaddress().substring(0, ordinalIndexOf(nic.getIPaddress(), ".", 3)+1);
+                    if (!scanInProgress) throw new IllegalStateException();
+                    String address = nic.getIPaddress().substring(0, ordinalIndexOf(nic.getIPaddress(), ".", 3) + 1);
                     address = address + i;
                     InetAddress ip = InetAddress.getByName(address);
                     if (ip.isReachable(Integer.parseInt(timeout.getText()))) {
@@ -347,10 +307,18 @@ public class NetworkScanner {
                         }
                     }
                     progress = (i - Integer.parseInt(rangeMin.getText())) / Double.valueOf(Integer.parseInt(rangeMax.getText()) - Integer.parseInt(rangeMin.getText()));
+                    noConnection = false;
+                } catch (IllegalStateException e) {
+                    break;
                 } catch (Exception e) {
+                    progress = -1.0;
                 }
             }
-            progress = 100.0;
+            if (noConnection) {
+                progress = -1.0;
+            } else {
+                progress = 1.0;
+            }
         } catch (Exception e) {
             progress = -1.0;
         }

@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.Scanner;
 
@@ -54,7 +55,7 @@ public class NetworkScanner {
     }
 
 
-    private QueueSemaphore queue;
+    volatile private QueueSemaphore queue;
 
 
     @FXML
@@ -195,13 +196,11 @@ public class NetworkScanner {
                             }
 
                             final double finalProgress = progress / threadsRunningAtStart;
-                            System.out.println(finalProgress);
 
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     progressBar.setProgress(finalProgress);
-                                    System.out.println(finalProgress);
                                 }
                             });
                         }
@@ -214,8 +213,6 @@ public class NetworkScanner {
                             }
                         });
                         scanInProgress = false;
-                        System.out.println("Stop button set");
-
                     }
                 }.start();
 
@@ -237,6 +234,7 @@ public class NetworkScanner {
                         });
                         while(scan.isAlive()){
                             try {
+                                System.out.println("wait");
                                 sleep(100);
                             } catch (InterruptedException e) {
                             }
@@ -267,22 +265,16 @@ public class NetworkScanner {
 
         private double progress;
 
-        private boolean threadIsDone;
-
         public Thread scan(int nicIndex) {
             Thread scan = new Thread() {
                 @Override
                 public void run() {
-                    threadIsDone = true;
                     NetworkInterface.NIC nic = new NetworkInterface.NIC();
                     NetworkInterface.clone(nic, NetworkInterface.NIC.get(nicIndex));
                     try {
                         scanNetwork(nic);
                     } catch (Exception e) {
-                        System.out.print("Exception caught: ");
-                        e.printStackTrace();
                     }
-                    threadIsDone = false;
                 }
             };
             return scan;
@@ -298,36 +290,23 @@ public class NetworkScanner {
         try {
             for (int i = Integer.parseInt(rangeMin.getText()); i <= Integer.parseInt(rangeMax.getText()); i++) {
 
-
-                while (!queue.tryLogin()) {
-                    sleep(10);
-                }
-
-                    try {
-                        if (!scanInProgress) throw new IllegalStateException();
-                        String address = nic.getIPaddress().substring(0, ordinalIndexOf(nic.getIPaddress(), ".", 3) + 1);
-                        address = address + i;
-                        InetAddress ip = InetAddress.getByName(address);
-                        if (ip.isReachable(Integer.parseInt(timeout.getText()))) {
-                            String name = ip.getHostName();
-                            if (name.equals(address)) {
-                                name = null;
-                            }
-                            String macAddr = getMacFromArpTable(address, nic);
-                            String manufacturer = getManufacturer(macAddr);
-                            if (!address.equals(nic.getIPaddress())) {
-                                networkLocation networkLocation = new networkLocation(name, address, macAddr, manufacturer);
-                                data.add(networkLocation);
-                            }
-                        }
-                        progress = (i - Integer.parseInt(rangeMin.getText())) / Double.valueOf(Integer.parseInt(rangeMax.getText()) - Integer.parseInt(rangeMin.getText()));
-                        noConnection = false;
-                    } catch (IllegalStateException e) {
-                        break;
-                    } catch (Exception e) {
-                        progress = -1.0;
+                try {
+                    if (!scanInProgress)
+                    {
+                        throw new IllegalStateException();
                     }
-                    queue.logout();
+
+                    loginAndWaitInQueue();
+
+                    startThreadAndPingDevice(nic, i);
+
+                    progress = (i - Integer.parseInt(rangeMin.getText())) / Double.valueOf(Integer.parseInt(rangeMax.getText()) - Integer.parseInt(rangeMin.getText()));
+                    noConnection = false;
+                } catch (IllegalStateException e) {
+                    break;
+                } catch (Exception e) {
+                    progress = -1.0;
+                }
 
             }
             if (noConnection) {
@@ -339,6 +318,78 @@ public class NetworkScanner {
             progress = -1.0;
         }
 
+        }
+
+        private void startThreadAndPingDevice(NetworkInterface.NIC nic, int i) {
+            new Thread() {
+                @Override
+                public void run() {
+                    String address = null;
+
+                    address = formatIpAddress(address, nic);
+
+                    address = address + i;
+
+                    try {
+                        pingDeviceAndGetInformation(address, nic);
+                    } catch (Exception e) {}
+
+                    queue.logout();
+                }
+            }.start();
+        }
+
+        private void pingDeviceAndGetInformation(String address, NetworkInterface.NIC nic) {
+            InetAddress ip = null;
+            ip = GetIpByName(address, ip);
+            try {
+                if (ip.isReachable(Integer.parseInt(timeout.getText()))) {
+                    String name = ip.getHostName();
+                    if (name.equals(address)) {
+                        name = null;
+                    }
+                    String macAddr = getMacFromArpTable(address, nic);
+                    String manufacturer = getManufacturer(macAddr);
+                    if (!address.equals(nic.getIPaddress())) {
+                        final networkLocation networkLocation = new networkLocation(name, address, macAddr, manufacturer);
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                data.add(networkLocation);
+                            }
+                        });
+                    }
+                }
+            } catch (IOException e) {
+            }
+        }
+
+        private InetAddress GetIpByName(String address, InetAddress ip) {
+            try {
+                ip = InetAddress.getByName(address);
+            } catch (UnknownHostException e) {
+            }
+            return ip;
+        }
+
+        private String formatIpAddress(String address, NetworkInterface.NIC nic) {
+            try {
+                address = nic.getIPaddress().substring(0, ordinalIndexOf(nic.getIPaddress(), ".", 3) + 1);
+
+            } catch (Exception e) {
+
+            }
+            return address;
+        }
+
+        private void loginAndWaitInQueue() {
+            boolean loggedIn = queue.tryLogin();
+            while (!loggedIn) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {}
+                loggedIn = queue.tryLogin();
+            }
         }
     }
 
@@ -441,7 +492,6 @@ public class NetworkScanner {
             }
             return manufacturer;
         } catch (Exception e) {
-            System.out.println("Exception");
             return "NA";
         }
     }

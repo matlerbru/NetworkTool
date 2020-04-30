@@ -21,8 +21,6 @@ import static java.lang.Thread.sleep;
 
 public class NetworkScanner {
 
-    ObservableList<networkLocation> data;
-
     public void initialize() {
         try {
             setNicData();
@@ -33,7 +31,7 @@ public class NetworkScanner {
         }
         initTable();
 
-        queue = new QueueSemaphore(10);
+        queue = new QueueSemaphore(5);
     }
 
     void initTable() {
@@ -50,13 +48,11 @@ public class NetworkScanner {
                 new PropertyValueFactory<networkLocation,String>("Manufacturer")
         );
 
-        data = FXCollections.observableArrayList();
-        networkLocationTable.setItems(data);
+        tableData = FXCollections.observableArrayList();
+        networkLocationTable.setItems(tableData);
     }
 
-
     volatile private QueueSemaphore queue;
-
 
     @FXML
     private ComboBox<String> NIC;
@@ -76,6 +72,7 @@ public class NetworkScanner {
     @FXML
     private Button scanButton;
 
+    ObservableList<networkLocation> tableData;
     @FXML
     private TableView<networkLocation> networkLocationTable;
 
@@ -154,69 +151,36 @@ public class NetworkScanner {
                     @Override
                     public void run() {
 
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                data.clear();
-                                scanButton.setText("Stop");
-                                progressBar.setVisible(true);
-                            }
-                        });
+                        updateGuiToStartScan();
 
-                        boolean threadRunningAtStartSet = false;
-                        int threadsRunningAtStart = 0;
                         while(true) {
-                            try {
-                                sleep(100);
-                            } catch (InterruptedException e) {
-                            }
+                            threadSleep(10);
 
-                            int threadsRunning = 0;
-                            for (int i = 0; i <= NetworkInterface.NIC.size() - 1; i++) {
-                                if (scans.get(i).isAlive()) {
-                                    threadsRunning++;
-                                }
-                            }
-                            if (!threadRunningAtStartSet) {
-                                threadsRunningAtStart = threadsRunning;
-                                threadRunningAtStartSet = true;
-                            }
-
-                            if (threadsRunning == 0) {
+                            int scansRunning = getScansRunning(scans);
+                            if (scansRunning == 0) {
                                 break;
                             }
-
-
-
                             double progress = 0;
                             for (int i = 0; i <= NetworkInterface.NIC.size() - 1; i++) {
                                 if (scanners.get(i).getProgress() != -1.0) {
                                     progress = progress + scanners.get(i).getProgress();
                                 }
                             }
-
-                            final double finalProgress = progress / threadsRunningAtStart;
-
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    progressBar.setProgress(finalProgress);
-                                }
-                            });
+                            if (!scanInProgress) {
+                                break;
+                            }
+                            progress = progress / scanners.size();
+                            updateGuiProgressBar(progress);
                         }
 
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                scanButton.setText("Scan");
-                                progressBar.setVisible(false);
-                            }
-                        });
+                        updateGuiToEndScan();
+
                         scanInProgress = false;
                     }
                 }.start();
 
             } else {
+
                 NetworkScannerService scanner = new NetworkScannerService();
                 Thread scan = scanner.scan(NIC.getSelectionModel().getSelectedIndex()-1);
                 scan.start();
@@ -224,39 +188,64 @@ public class NetworkScanner {
                 new Thread(){
                     @Override
                     public void run(){
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                data.clear();
-                                scanButton.setText("Stop");
-                                progressBar.setVisible(true);
-                            }
-                        });
+                        updateGuiToStartScan();
                         while(scan.isAlive()){
-                            try {
-                                System.out.println("wait");
-                                sleep(100);
-                            } catch (InterruptedException e) {
-                            }
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    progressBar.setProgress(scanner.getProgress());
-                                }
-                            });
+                            threadSleep(10);
+                            updateGuiProgressBar(scanner.getProgress());
                         }
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                scanButton.setText("Scan");
-                                progressBar.setVisible(false);
-                            }
-                        });
+                        updateGuiToEndScan();
                         scanInProgress = false;
                     }
                 }.start();
             }
         }
+    }
+
+    private void updateGuiProgressBar(double progress) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setProgress(progress);
+            }
+        });
+    }
+
+    private int getScansRunning(LinkedList<Thread> scans) {
+        int threadsRunning = 0;
+        for (int i = 0; i < scans.size(); i++) {
+            if (scans.get(i).isAlive()) {
+                threadsRunning++;
+            }
+        }
+        return threadsRunning;
+    }
+
+    private void threadSleep(int time) {
+        try {
+            sleep(time);
+        } catch (InterruptedException e) {
+        }
+    }
+
+    private void updateGuiToStartScan() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                tableData.clear();
+                scanButton.setText("Stop");
+                progressBar.setVisible(true);
+            }
+        });
+    }
+
+    private void updateGuiToEndScan() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                scanButton.setText("Scan");
+                progressBar.setVisible(false);
+            }
+        });
     }
 
     private class NetworkScannerService {
@@ -272,6 +261,7 @@ public class NetworkScanner {
                     NetworkInterface.NIC nic = new NetworkInterface.NIC();
                     NetworkInterface.clone(nic, NetworkInterface.NIC.get(nicIndex));
                     try {
+                        progress = 0;
                         scanNetwork(nic);
                     } catch (Exception e) {
                     }
@@ -285,43 +275,33 @@ public class NetworkScanner {
         };
 
         private void scanNetwork(NetworkInterface.NIC nic) throws IOException {
-        boolean noConnection = true;
-
         try {
-            for (int i = Integer.parseInt(rangeMin.getText()); i <= Integer.parseInt(rangeMax.getText()); i++) {
 
+            LinkedList<Thread> threads = new LinkedList<Thread>();
+
+            for (int i = Integer.parseInt(rangeMin.getText()); i <= Integer.parseInt(rangeMax.getText()); i++) {
                 try {
                     if (!scanInProgress)
                     {
                         throw new IllegalStateException();
                     }
-
                     loginAndWaitInQueue();
-
-                    startThreadAndPingDevice(nic, i);
-
-                    progress = (i - Integer.parseInt(rangeMin.getText())) / Double.valueOf(Integer.parseInt(rangeMax.getText()) - Integer.parseInt(rangeMin.getText()));
-                    noConnection = false;
+                    threads.add(startThreadAndPingDevice(nic, i));
+                    threads.getLast().start();
                 } catch (IllegalStateException e) {
                     break;
                 } catch (Exception e) {
                     progress = -1.0;
                 }
-
             }
-            if (noConnection) {
-                progress = -1.0;
-            } else {
-                progress = 1.0;
-            }
+            waitForAllThreadsToDie(threads);
         } catch (Exception e) {
             progress = -1.0;
         }
-
         }
 
-        private void startThreadAndPingDevice(NetworkInterface.NIC nic, int i) {
-            new Thread() {
+        private Thread startThreadAndPingDevice(NetworkInterface.NIC nic, int i) {
+            Thread thread = new Thread() {
                 @Override
                 public void run() {
                     String address = null;
@@ -332,36 +312,41 @@ public class NetworkScanner {
 
                     try {
                         pingDeviceAndGetInformation(address, nic);
-                    } catch (Exception e) {}
+                    } catch (NullPointerException e) {}
 
                     queue.logout();
                 }
-            }.start();
+            };
+            return thread;
         }
 
-        private void pingDeviceAndGetInformation(String address, NetworkInterface.NIC nic) {
-            InetAddress ip = null;
-            ip = GetIpByName(address, ip);
-            try {
-                if (ip.isReachable(Integer.parseInt(timeout.getText()))) {
-                    String name = ip.getHostName();
-                    if (name.equals(address)) {
-                        name = null;
-                    }
-                    String macAddr = getMacFromArpTable(address, nic);
-                    String manufacturer = getManufacturer(macAddr);
-                    if (!address.equals(nic.getIPaddress())) {
-                        final networkLocation networkLocation = new networkLocation(name, address, macAddr, manufacturer);
+        private void pingDeviceAndGetInformation(String address, NetworkInterface.NIC nic) throws IllegalStateException {
+            String hostName = getHostNameFromIp(address, Integer.parseInt(timeout.getText()));
+            if ( hostName != null ) {
+                String macAddr = getMacFromArpTable(address, nic);
+                String manufacturer = getManufacturer(macAddr);
+                if (!address.equals(nic.getIPaddress())) {
+                    final networkLocation networkLocation = new networkLocation(hostName, address, macAddr, manufacturer);
+
+                    if (scanInProgress)
+                    {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                data.add(networkLocation);
+                                tableData.add(networkLocation);
                             }
                         });
                     }
                 }
-            } catch (IOException e) {
             }
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    double incrementBy = 1.0 / (Integer.parseInt(rangeMax.getText()) - Integer.parseInt(rangeMin.getText()) + 1);
+                    progress = progress + incrementBy;
+                }
+            });
+
         }
 
         private InetAddress GetIpByName(String address, InetAddress ip) {
@@ -389,6 +374,19 @@ public class NetworkScanner {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {}
                 loggedIn = queue.tryLogin();
+            }
+        }
+    }
+
+    private void waitForAllThreadsToDie(LinkedList<Thread> threads) {
+        while (true) {
+            for (int i = 0; i < threads.size(); i++) {
+                if (!threads.get(i).isAlive()) {
+                    threads.remove(i);
+                }
+            }
+            if (threads.size() == 0) {
+                break;
             }
         }
     }
@@ -435,6 +433,37 @@ public class NetworkScanner {
         } catch (Exception e) {
             timeout.setText("");
         }
+    }
+
+    private String getHostNameFromIp(String ipAddr, int timeout) {
+        ProcessBuilder pb = new ProcessBuilder();
+        String command = "ping -a -n 1 " + ipAddr + " -w " + timeout;
+        System.out.println(command);
+        try {
+            Process process = pb.start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            String hostName = null;
+            while ((line = reader.readLine()) != null) {
+                if (line.length() != 0) {
+                    if (line.contains("Destination host unreachable")){
+                        break;
+                    }
+                    if (line.contains("Pinging")) {
+                        if (line.contains("[") && line.contains("]")) {
+                            hostName = line.substring(8, line.indexOf("[") - 1);
+                        } else {
+                            hostName = "";
+                        }
+                    }
+                    if (line.contains("Reply from ")) {
+                        return hostName;
+                    }
+                }
+            }
+        } catch (Exception e) {
+        }
+        return null;
     }
 
     private String getMacFromArpTable (String ipAddr, NetworkInterface.NIC nic) {

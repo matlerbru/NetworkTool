@@ -1,6 +1,5 @@
 package NetworkTool;
 
-import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,6 +14,7 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 
 import static java.lang.Thread.sleep;
@@ -153,7 +153,7 @@ public class NetworkScanner {
                     while(true) {
                         threadSleep(10);
 
-                        int scansRunning = getScansRunning(scans);
+                        int scansRunning = getAmountOfThreadsAlive(scans);
                         if (scansRunning == 0) {
                             break;
                         }
@@ -198,10 +198,10 @@ public class NetworkScanner {
         runLater(() -> progressBar.setProgress(progress));
     }
 
-    private int getScansRunning(LinkedList<Thread> scans) {
+    private int getAmountOfThreadsAlive(List<Thread> scans) {
         int threadsRunning = 0;
-        for (int i = 0; i < scans.size(); i++) {
-            if (scans.get(i).isAlive()) {
+        for (Thread scan : scans) {
+            if (scan.isAlive()) {
                 threadsRunning++;
             }
         }

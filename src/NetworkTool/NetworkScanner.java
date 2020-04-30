@@ -438,7 +438,7 @@ public class NetworkScanner {
     private String getHostNameFromIp(String ipAddr, int timeout) {
         ProcessBuilder pb = new ProcessBuilder();
         String command = "ping -a -n 1 " + ipAddr + " -w " + timeout;
-        System.out.println(command);
+        pb.command("cmd.exe", "/c", command);
         try {
             Process process = pb.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));

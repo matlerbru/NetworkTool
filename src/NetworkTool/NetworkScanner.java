@@ -23,30 +23,26 @@ import static javafx.application.Platform.*;
 public class NetworkScanner {
 
     public void initialize() {
-        try {
-            setNicData();
-            NIC.getSelectionModel().selectFirst();
-            progressBar.setVisible(false);
-
-        } catch (Exception e) {
-        }
+        setNicData();
+        NIC.getSelectionModel().selectFirst();
+        progressBar.setVisible(false);
         initTable();
 
-        queue = new QueueSemaphore(5);
+        queue = new QueueSemaphore(500);
     }
 
     void initTable() {
         itemNameCol.setCellValueFactory(
-                new PropertyValueFactory<networkLocation,String>("Name")
+                new PropertyValueFactory<NetworkLocation,String>("Name")
         );
         itemIpAddrCol.setCellValueFactory(
-                new PropertyValueFactory<networkLocation,String>("ipAddr")
+                new PropertyValueFactory<NetworkLocation,String>("ipAddr")
         );
         itemMacAddrCol.setCellValueFactory(
-                new PropertyValueFactory<networkLocation,String>("macAddr")
+                new PropertyValueFactory<NetworkLocation,String>("macAddr")
         );
         itemManufacturerCol.setCellValueFactory(
-                new PropertyValueFactory<networkLocation,String>("Manufacturer")
+                new PropertyValueFactory<NetworkLocation,String>("Manufacturer")
         );
 
         tableData = FXCollections.observableArrayList();
@@ -73,9 +69,9 @@ public class NetworkScanner {
     @FXML
     private Button scanButton;
 
-    ObservableList<networkLocation> tableData;
+    ObservableList<NetworkLocation> tableData;
     @FXML
-    private TableView<networkLocation> networkLocationTable;
+    private TableView<NetworkLocation> networkLocationTable;
 
     @FXML
     TableColumn itemNameCol;
@@ -89,13 +85,13 @@ public class NetworkScanner {
     @FXML
     TableColumn itemManufacturerCol;
 
-    public static class networkLocation {
+    public static class NetworkLocation {
         public SimpleStringProperty name = new SimpleStringProperty();
         public SimpleStringProperty ipAddr = new SimpleStringProperty();
         public SimpleStringProperty macAddr = new SimpleStringProperty();
         public SimpleStringProperty manufacturer = new SimpleStringProperty();
 
-        private networkLocation (String name, String ipAddr, String macAddr, String manufacturer) {
+        private NetworkLocation(String name, String ipAddr, String macAddr, String manufacturer) {
             this.name = new SimpleStringProperty(name);
             this.ipAddr = new SimpleStringProperty(ipAddr);
             this.macAddr = new SimpleStringProperty(macAddr);
@@ -230,8 +226,6 @@ public class NetworkScanner {
         });
     }
 
-
-
     private class NetworkScannerService {
         public NetworkScannerService() {
         }
@@ -302,11 +296,20 @@ public class NetworkScanner {
                 String macAddr = getMacFromArpTable(address, nic);
                 String manufacturer = getManufacturer(macAddr);
                 if (!address.equals(nic.getIPaddress())) {
-                    final networkLocation networkLocation = new networkLocation(hostName, address, macAddr, manufacturer);
+                    final NetworkLocation networkLocation = new NetworkLocation(hostName, address, macAddr, manufacturer);
 
                     if (scanInProgress)
                     {
-                        runLater(() -> tableData.add(networkLocation));
+                        boolean duplicateNetworkLocation = false;
+                        for (int i = 0; i < networkLocationTable.getItems().size(); i++) {
+                            NetworkLocation temp = networkLocationTable.getItems().get(i);
+                            if (temp.getMacAddr().equals(networkLocation.getMacAddr())) {
+                                duplicateNetworkLocation = true;
+                            }
+                        }
+                        if (!duplicateNetworkLocation) {
+                            runLater(() -> tableData.add(networkLocation));
+                        }
                     }
                 }
             }
@@ -315,14 +318,6 @@ public class NetworkScanner {
                 progress = progress + incrementBy;
             });
 
-        }
-
-        private InetAddress GetIpByName(String address, InetAddress ip) {
-            try {
-                ip = InetAddress.getByName(address);
-            } catch (UnknownHostException e) {
-            }
-            return ip;
         }
 
         private String formatIpAddress(String address, NetworkInterface.NIC nic) {

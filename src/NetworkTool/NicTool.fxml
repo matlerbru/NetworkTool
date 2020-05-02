@@ -48,7 +48,7 @@
                     <GridPane alignment="center" maxHeight="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT">
                         <children>
                             <ComboBox fx:id="NIC" maxWidth="1.7976931348623157E308" minWidth="220.0" onAction="#updateNicSettings" promptText="Select" visibleRowCount="20" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="1" />
-                            <Label prefHeight="17.0" prefWidth="25.0" text="NIC:" GridPane.rowIndex="1" />
+                            <Label fx:id="nicLabel" prefHeight="17.0" prefWidth="25.0" text="NIC:" GridPane.rowIndex="1" />
                         </children>
                         <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="0.0" prefWidth="95.0" />
@@ -85,17 +85,17 @@
                             <RowConstraints minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
                         </rowConstraints>
                         <children>
-                            <Label text="IP:" GridPane.rowIndex="1" />
-                            <Label text="Subnet mask:" GridPane.rowIndex="3" />
-                            <Label text="Default gateway:" GridPane.rowIndex="5" />
+                            <Label fx:id="ipLabel" text="IP:" GridPane.rowIndex="1" />
+                            <Label fx:id="subnetLabel" text="Subnet mask:" GridPane.rowIndex="3" />
+                            <Label fx:id="gatewayLabel" text="Default gateway:" GridPane.rowIndex="5" />
                             <TextField fx:id="IP" alignment="CENTER" disable="true" onAction="#ipEvent" onInputMethodTextChanged="#ipEvent" onKeyPressed="#ipEvent" onKeyReleased="#ipEvent" onKeyTyped="#ipEvent" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
                             <TextField fx:id="subnetMask" alignment="CENTER" disable="true" onAction="#subnetMaskEvent" onInputMethodTextChanged="#subnetMaskEvent" onKeyPressed="#subnetMaskEvent" onKeyReleased="#subnetMaskEvent" onKeyTyped="#subnetMaskEvent" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
                             <TextField fx:id="defaultGateway" alignment="CENTER" disable="true" onAction="#DefaultGatewayEvent" onInputMethodTextChanged="#DefaultGatewayEvent" onKeyPressed="#DefaultGatewayEvent" onKeyReleased="#DefaultGatewayEvent" onKeyTyped="#DefaultGatewayEvent" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
-                            <Label text="MAC:" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                            <Label fx:id="macLabel" text="MAC:" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                             <TextField fx:id="macAdress" disable="true" editable="false" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-                            <Label text="DHCP:" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                            <Label fx:id="dhcpLabel" text="DHCP:" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                             <CheckBox fx:id="dhcp" disable="true" mnemonicParsing="false" onAction="#dhcpEvent" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-                            <Label text="Name:" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                            <Label fx:id="nameLabel" text="Name:" GridPane.columnIndex="3" GridPane.rowIndex="5" />
                             <TextField fx:id="name" disable="true" onAction="#nameEvent" onInputMethodTextChanged="#nameEvent" onKeyPressed="#nameEvent" onKeyReleased="#nameEvent" onKeyTyped="#nameEvent" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
                         </children>
                     </GridPane>

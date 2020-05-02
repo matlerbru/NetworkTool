@@ -1,5 +1,7 @@
 package NetworkTool;
 
+import javafx.beans.value.ChangeListener;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -16,11 +18,6 @@ public class NicTool {
     NetworkInterface.NIC tempNic = new NetworkInterface.NIC();
     NetworkInterface.NIC lastSetup = new NetworkInterface.NIC();
     ProfileContainer profile = new ProfileContainer();
-
-
-
-    @FXML
-    private Pane mainPane;
 
     @FXML
     private ComboBox<String> NIC;
@@ -64,6 +61,28 @@ public class NicTool {
     @FXML
     private BorderPane setupPane;
 
+    @FXML
+    private Label nicLabel;
+
+    @FXML
+    private Label ipLabel;
+
+    @FXML
+    private Label subnetLabel;
+
+    @FXML
+    private Label gatewayLabel;
+
+    @FXML
+    private Label macLabel;
+
+    @FXML
+    private Label dhcpLabel;
+
+    @FXML
+    private Label nameLabel;
+
+
 
     public void initialize () {
         try {
@@ -75,10 +94,29 @@ public class NicTool {
             NicSettings.setHgrow(resultPane, Priority.ALWAYS);
             NicSettings.setHgrow(setupPane, Priority.ALWAYS);
 
+            setupPane.widthProperty().addListener((obs, oldVal, newVal) -> {
+                if ((double) newVal < 376) {
+                    macLabel.setVisible(false);
+                    dhcpLabel.setVisible(false);
+                    nameLabel.setVisible(false);
+                } else {
+                    macLabel.setVisible(true);
+                    dhcpLabel.setVisible(true);
+                    nameLabel.setVisible(true);
+                }
 
-
-
-
+                if ((double) newVal < 282) {
+                    nicLabel.setVisible(false);
+                    ipLabel.setVisible(false);
+                    subnetLabel.setVisible(false);
+                    gatewayLabel.setVisible(false);
+                } else {
+                    nicLabel.setVisible(true);
+                    ipLabel.setVisible(true);
+                    subnetLabel.setVisible(true);
+                    gatewayLabel.setVisible(true);
+                }
+            });
 
         } catch (Exception e) {
         }

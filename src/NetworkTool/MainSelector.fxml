@@ -3,15 +3,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="NetworkTool.MainSelector">
-    <children>
-        <TabPane>
-            <Tab fx:id="NicSettingsTab" closable="false" text="NIC settings">
-                <fx:include source="NicTool.fxml" />
-            </Tab>
-            <Tab fx:id="NetworkScannerTab" closable="false" text="Network scanner">
-                <fx:include source="NetworkScanner.fxml" />
-            </Tab>
-        </TabPane>
-    </children>
-</Pane>
+    <TabPane fx:id="tabPane" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="NetworkTool.MainSelector">
+        <Tab fx:id="NicSettingsTab" closable="false" text="NIC settings">
+            <fx:include source="NicTool.fxml" />
+        </Tab>
+        <Tab fx:id="NetworkScannerTab" closable="false" text="Network scanner">
+            <fx:include source="NetworkScanner.fxml" />
+        </Tab>
+    </TabPane>
+

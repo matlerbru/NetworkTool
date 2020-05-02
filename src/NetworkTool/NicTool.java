@@ -2,8 +2,7 @@ package NetworkTool;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,6 +16,8 @@ public class NicTool {
     NetworkInterface.NIC tempNic = new NetworkInterface.NIC();
     NetworkInterface.NIC lastSetup = new NetworkInterface.NIC();
     ProfileContainer profile = new ProfileContainer();
+
+
 
     @FXML
     private Pane mainPane;
@@ -55,16 +56,13 @@ public class NicTool {
     private ListView profileSelect;
 
     @FXML
-    private Button addProfile;
-
-    @FXML
-    private Button removeProfile;
-
-    @FXML
-    private Button loadProfile;
-
-    @FXML
     private HBox NicSettings;
+
+    @FXML
+    private BorderPane resultPane;
+
+    @FXML
+    private BorderPane setupPane;
 
 
     public void initialize () {
@@ -73,6 +71,14 @@ public class NicTool {
             updateProfileFromFile(".Profile.xml");
             Path path = Paths.get(".Profile.xml");
             Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+
+            NicSettings.setHgrow(resultPane, Priority.ALWAYS);
+            NicSettings.setHgrow(setupPane, Priority.ALWAYS);
+
+
+
+
+
 
         } catch (Exception e) {
         }

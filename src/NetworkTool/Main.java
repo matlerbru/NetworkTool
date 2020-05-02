@@ -20,6 +20,8 @@ public class Main extends Application {
         Parent root = loader.load();
         primaryStage.setTitle("Network tool");
         primaryStage.setScene(new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT));
+        primaryStage.setMinHeight(220);
+        primaryStage.setMinWidth(470);
         primaryStage.show();
         MainSelector controller = loader.<MainSelector>getController();
         ProfileContainer.loadProfilesFromFile(".profile.xml");

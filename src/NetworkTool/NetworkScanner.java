@@ -6,6 +6,10 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,7 +32,10 @@ public class NetworkScanner {
         progressBar.setVisible(false);
         initTable();
 
-        queue = new QueueSemaphore(500);
+        networkScanner.setHgrow(resultPane, Priority.ALWAYS);
+        networkScanner.setHgrow(setupPane, Priority.ALWAYS);
+
+        queue = new QueueSemaphore(5);
     }
 
     void initTable() {
@@ -52,10 +59,19 @@ public class NetworkScanner {
     volatile private QueueSemaphore queue;
 
     @FXML
+    private HBox networkScanner;
+
+    @FXML
     private ComboBox<String> NIC;
 
     @FXML
     private TextField rangeMin;
+
+    @FXML
+    private BorderPane setupPane;
+
+    @FXML
+    private BorderPane resultPane;
 
     @FXML
     private TextField rangeMax;
@@ -391,7 +407,7 @@ public class NetworkScanner {
                 throw new IOException();
             }
         } catch (Exception e) {
-            timeout.setText("");
+            timeout.setText("100");
         }
 
     }

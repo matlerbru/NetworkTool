@@ -47,7 +47,7 @@ public class NicTool {
     private Button defaultButton;
 
     @FXML
-    private Button applytButton;
+    private Button applyButton;
 
     @FXML
     private ListView profileSelect;
@@ -93,30 +93,6 @@ public class NicTool {
 
             NicSettings.setHgrow(resultPane, Priority.ALWAYS);
             NicSettings.setHgrow(setupPane, Priority.ALWAYS);
-
-            setupPane.widthProperty().addListener((obs, oldVal, newVal) -> {
-                if ((double) newVal < 376) {
-                    macLabel.setVisible(false);
-                    dhcpLabel.setVisible(false);
-                    nameLabel.setVisible(false);
-                } else {
-                    macLabel.setVisible(true);
-                    dhcpLabel.setVisible(true);
-                    nameLabel.setVisible(true);
-                }
-
-                if ((double) newVal < 282) {
-                    nicLabel.setVisible(false);
-                    ipLabel.setVisible(false);
-                    subnetLabel.setVisible(false);
-                    gatewayLabel.setVisible(false);
-                } else {
-                    nicLabel.setVisible(true);
-                    ipLabel.setVisible(true);
-                    subnetLabel.setVisible(true);
-                    gatewayLabel.setVisible(true);
-                }
-            });
 
         } catch (Exception e) {
         }
@@ -177,7 +153,7 @@ public class NicTool {
         setIpFieldsEditable(!dhcp.isSelected());
         tempNic.setDhcp(dhcp.isSelected());
         defaultButton.setDisable(false);
-        applytButton.setDisable(false);
+        applyButton.setDisable(false);
     }
 
     public void ipEvent () {
@@ -189,7 +165,7 @@ public class NicTool {
             IP.setText(tempNic.getIPaddress());
         }
         defaultButton.setDisable(false);
-        applytButton.setDisable(false);
+        applyButton.setDisable(false);
     }
 
     public void subnetMaskEvent () {
@@ -201,7 +177,7 @@ public class NicTool {
             subnetMask.setText(tempNic.getSubnetMask());
         }
         defaultButton.setDisable(false);
-        applytButton.setDisable(false);
+        applyButton.setDisable(false);
     }
 
     public void DefaultGatewayEvent () {
@@ -213,13 +189,13 @@ public class NicTool {
             defaultGateway.setText(tempNic.getDefaultGateway());
         }
         defaultButton.setDisable(false);
-        applytButton.setDisable(false);
+        applyButton.setDisable(false);
     }
 
     public void nameEvent () {
         tempNic.setDisplayName(name.getText());
         defaultButton.setDisable(false);
-        applytButton.setDisable(false);
+        applyButton.setDisable(false);
     }
 
 
@@ -264,7 +240,7 @@ public class NicTool {
             NetworkInterface.clone(tempNic, NetworkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
             setUiTo(tempNic);
             defaultButton.setDisable(true);
-            applytButton.setDisable(true);
+            applyButton.setDisable(true);
         }
     }
 
@@ -276,7 +252,7 @@ public class NicTool {
             NetworkInterface.updateNIC(NIC.getSelectionModel().getSelectedIndex());
             setUiTo(NetworkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
             defaultButton.setDisable(true);
-            applytButton.setDisable(true);
+            applyButton.setDisable(true);
         }
     }
 
@@ -299,7 +275,7 @@ public class NicTool {
         NetworkInterface.updateNIC(NIC.getSelectionModel().getSelectedIndex());
         setUiTo(NetworkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
         defaultButton.setDisable(true);
-        applytButton.setDisable(true);
+        applyButton.setDisable(true);
     }
 
     public void AddProfileButtonEvent () throws IOException {

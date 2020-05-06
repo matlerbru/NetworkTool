@@ -11,7 +11,7 @@ import static javafx.application.Platform.runLater;
 public class NetworkScannerService {
 
     public NetworkScannerService() {
-        //queue.setLimit(10);
+
     }
 
     private double progress;
@@ -41,17 +41,14 @@ public class NetworkScannerService {
             LinkedList<Thread> threads = new LinkedList<>();
             for (int i = Main.controller.getNetworkScanner().getRangeMin(); i <= Main.controller.getNetworkScanner().getRangeMax(); i++) {
                 try {
-                    /*
-                    if (!scanInProgress)
+                    if (!Main.controller.getNetworkScanner().getScanInProgress())
                     {
                         throw new IllegalStateException();
                     }
-                    */
                     loginAndWaitInQueue();
                     threads.add(startThreadAndPingDevice(nic, i));
                     threads.getLast().start();
                 } catch (IllegalStateException e) {
-                    e.printStackTrace();
                     break;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -66,12 +63,17 @@ public class NetworkScannerService {
 
     private Thread startThreadAndPingDevice(NetworkInterface.NIC nic, int i) {
         return new Thread(() -> {
+            try {
             String address = formatIpAddress(nic);
             address = address + i;
-            try {
-                pingDeviceAndGetInformation(address, nic);
+            pingDeviceAndGetInformation(address, nic);
             } catch (NullPointerException e) {
                 e.printStackTrace();
+            } catch (NumberFormatException e) {
+                runLater(() -> {
+                    double incrementBy = 1.0 / (Main.controller.getNetworkScanner().getRangeMax() - Main.controller.getNetworkScanner().getRangeMin() + 1);
+                    progress = progress + incrementBy;
+                });
             }
             queue.logout();
         });
@@ -85,8 +87,8 @@ public class NetworkScannerService {
             if (!address.equals(nic.getIPaddress())) {
                 final NetworkLocation networkLocation = new NetworkLocation(hostName, address, macAddr, manufacturer);
 
-                //if (scanInProgress)
-                //{
+                if (Main.controller.getNetworkScanner().getScanInProgress())
+                {
                     boolean duplicateNetworkLocation = false;
                     for (int i = 0; i < Main.controller.getNetworkScanner().getTableSize(); i++) {
                         NetworkLocation temp = Main.controller.getNetworkScanner().getTableRow(i);
@@ -97,24 +99,21 @@ public class NetworkScannerService {
                     if (!duplicateNetworkLocation) {
                         Main.controller.getNetworkScanner().addToTable(networkLocation);
                     }
-                //}
+                }
             }
         }
         runLater(() -> {
             double incrementBy = 1.0 / (Main.controller.getNetworkScanner().getRangeMax() - Main.controller.getNetworkScanner().getRangeMin() + 1);
             progress = progress + incrementBy;
         });
-
     }
 
     private String formatIpAddress(NetworkInterface.NIC nic) {
         try {
             return nic.getIPaddress().substring(0, Utility.ordinalIndexOf(nic.getIPaddress(), ".", 3) + 1);
-
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new NumberFormatException();
         }
-        return null;
     }
 
     private void loginAndWaitInQueue() {

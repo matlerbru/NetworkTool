@@ -11,15 +11,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Scanner;
 
 import static javafx.application.Platform.*;
 
@@ -129,8 +124,11 @@ public class NetworkScanner implements Initializable {
         return networkLocationTable.getItems().size();
     }
 
-
     private volatile boolean scanInProgress;
+
+    public boolean getScanInProgress() {
+        return scanInProgress;
+    }
 
     public void setNicData() {
         NIC.getItems().clear();
@@ -164,7 +162,7 @@ public class NetworkScanner implements Initializable {
                     while(true) {
                         Utility.Threads.sleep(10);
                         int scansRunning = Utility.Threads.getAmountOfThreadsAlive(scans);
-                        if (scansRunning == 0) {
+                        if (scansRunning == 0 || !scanInProgress) {
                             break;
                         }
                         double progress = 0;
@@ -172,9 +170,6 @@ public class NetworkScanner implements Initializable {
                             if (scanners.get(i).getProgress() != -1.0) {
                                 progress = progress + scanners.get(i).getProgress();
                             }
-                        }
-                        if (!scanInProgress) {
-                            break;
                         }
                         progress = progress / scanners.size();
 
@@ -192,12 +187,10 @@ public class NetworkScanner implements Initializable {
 
                 new Thread(() -> {
                     updateGuiToStartScan();
-                    while(scan.isAlive()){
-                        System.out.println("Thread is alive!");
+                    while(scan.isAlive() && scanInProgress){
                         Utility.Threads.sleep(10);
                         setProgressBar(scanner.getProgress());
                     }
-                    System.out.println("Scan is alive at end: " + scan.isAlive());
                     updateGuiToEndScan();
                     scanInProgress = false;
                 }).start();

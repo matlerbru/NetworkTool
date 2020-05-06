@@ -10,16 +10,20 @@ public class QueueSemaphore {
 
     private Semaphore semaphore;
 
-    boolean tryLogin() {
+    public boolean tryLogin() {
         return semaphore.tryAcquire();
     }
 
-    void logout() {
+    public void logout() {
         semaphore.release();
     }
 
-    int availableSlots() {
+    public int availableSlots() {
         return semaphore.availablePermits();
+    }
+
+    public void setLimit(int limit) {
+        semaphore = new Semaphore(limit);
     }
 
 

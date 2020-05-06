@@ -26,12 +26,9 @@ public class MainSelector implements Initializable {
         return networkScannerController;
     }
 
-
-
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        networkScannerController.setProgressBar(0.5);
+
     }
 
 }

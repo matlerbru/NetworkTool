@@ -6,8 +6,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-
 public class Main extends Application {
+
+    public static MainSelector controller;
 
     static final int WINDOW_WIDTH = 630;
     static final int WINDOW_HEIGHT = 225;
@@ -23,9 +24,11 @@ public class Main extends Application {
         primaryStage.setMinHeight(230);
         primaryStage.setMinWidth(470);
         primaryStage.show();
-        MainSelector controller = loader.<MainSelector>getController();
+        controller = loader.<MainSelector>getController();
         ProfileContainer.loadProfilesFromFile(".profile.xml");
 
+        Thread test = new test();
+        test.start();
     }
 
     public static void main(String[] args) {

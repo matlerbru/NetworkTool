@@ -5,10 +5,10 @@
 
     <TabPane fx:id="tabPane" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="NetworkTool.MainSelector">
         <Tab fx:id="NicSettingsTab" closable="false" text="NIC settings">
-            <fx:include source="NicTool.fxml" />
+            <fx:include fx:id="nicTool" source="NicTool.fxml" />
         </Tab>
         <Tab fx:id="NetworkScannerTab" closable="false" text="Network scanner">
-            <fx:include source="NetworkScanner.fxml" />
+            <fx:include fx:id="networkScanner" source="NetworkScanner.fxml" />
         </Tab>
     </TabPane>
 

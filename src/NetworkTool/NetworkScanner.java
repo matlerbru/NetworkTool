@@ -4,9 +4,9 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -15,27 +15,27 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Scanner;
 
-import static java.lang.Thread.sleep;
 import static javafx.application.Platform.*;
 
-public class NetworkScanner {
+public class NetworkScanner implements Initializable {
 
-    public void initialize() {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         setNicData();
         NIC.getSelectionModel().selectFirst();
-        progressBar.setVisible(false);
+        //progressBar.setVisible(false);
         initTable();
 
         networkScanner.setHgrow(resultPane, Priority.ALWAYS);
         networkScanner.setHgrow(setupPane, Priority.ALWAYS);
 
-        queue = new QueueSemaphore(5);
+        queue = new QueueSemaphore(100);
     }
 
     void initTable() {
@@ -65,9 +65,6 @@ public class NetworkScanner {
     private ComboBox<String> NIC;
 
     @FXML
-    private TextField rangeMin;
-
-    @FXML
     private BorderPane setupPane;
 
     @FXML
@@ -76,11 +73,34 @@ public class NetworkScanner {
     @FXML
     private TextField rangeMax;
 
+    public int getRangeMax () {
+        return getTextFieldAsInteger(rangeMax);
+    }
+
+    @FXML
+    private TextField rangeMin;
+
+    public int getRangeMin () {
+        return getTextFieldAsInteger(rangeMin);
+    }
+
     @FXML
     private TextField timeout;
 
+    public int getTimeout () {
+        return getTextFieldAsInteger(timeout);
+    }
+
+    private int getTextFieldAsInteger(TextField text) {
+        return Integer.parseInt(text.getText());
+    }
+
     @FXML
     public ProgressBar progressBar;
+
+    public void setProgressBar(double progress) {
+        runLater(() -> progressBar.setProgress(progress));
+    }
 
     @FXML
     private Button scanButton;
@@ -163,8 +183,7 @@ public class NetworkScanner {
                 new Thread(() -> {
                     updateGuiToStartScan();
                     while(true) {
-                        threadSleep(10);
-
+                        Utility.Threads.sleep(10);
                         int scansRunning = getAmountOfThreadsAlive(scans);
                         if (scansRunning == 0) {
                             break;
@@ -179,7 +198,8 @@ public class NetworkScanner {
                             break;
                         }
                         progress = progress / scanners.size();
-                        updateGuiProgressBar(progress);
+
+                        progressBar.setProgress(progress);
                     }
 
                     updateGuiToEndScan();
@@ -196,18 +216,14 @@ public class NetworkScanner {
                 new Thread(() -> {
                     updateGuiToStartScan();
                     while(scan.isAlive()){
-                        threadSleep(10);
-                        updateGuiProgressBar(scanner.getProgress());
+                        Utility.Threads.sleep(10);
+                        progressBar.setProgress(scanner.getProgress());
                     }
                     updateGuiToEndScan();
                     scanInProgress = false;
                 }).start();
             }
         }
-    }
-
-    private void updateGuiProgressBar(double progress) {
-        runLater(() -> progressBar.setProgress(progress));
     }
 
     private int getAmountOfThreadsAlive(List<Thread> scans) {
@@ -218,13 +234,6 @@ public class NetworkScanner {
             }
         }
         return threadsRunning;
-    }
-
-    private void threadSleep(int time) {
-        try {
-            sleep(time);
-        } catch (InterruptedException e) {
-        }
     }
 
     private void updateGuiToStartScan() {

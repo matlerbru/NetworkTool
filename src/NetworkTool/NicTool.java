@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -199,41 +200,29 @@ public class NicTool {
         applyButton.setDisable(false);
     }
 
-
-    public boolean isFormattedAsIp (String field) {
-        String temp = field;
-        int dotCount = 0;
-        int lastDot = -1;
+    public boolean isFormattedAsIp(String field) {
         try {
-            for (int i = 0; i < temp.length(); i++) {
-                if (temp.charAt(i) == '.') {
-                    dotCount++;
-                    String subString = temp.substring(lastDot + 1, i);
-                    if (!subString.matches("\\d+") && !subString.isBlank()) {
-                        return false;
-                    } else {
-                        if (!subString.isBlank()) {
-                            if (Integer.parseInt(subString) > 255) {
-                                return false;
-                            }
-                        }
+            for (int i = 0; i < 3; i++) {
+                if (field.contains(".")) {
+                    int dot = field.indexOf(".");
+                    String string = field.substring(0, dot);
+                    int value = Integer.parseInt(string);
+                    if (value < 0 || value > 255) {
+                        throw new IOException();
                     }
-                    lastDot = i;
+                    field = field.replace(string + ".", "");
                 }
             }
-            if (dotCount != 3) return false;
-            if (temp.substring(lastDot + 1).matches("\\d+") || temp.substring(lastDot + 1).isBlank()) {
-                if (!temp.substring(lastDot + 1).isBlank()) {
-                    if (Integer.parseInt(temp.substring(lastDot + 1)) > 255) {
-                        return false;
-                    }
-                }
-                return true;
-            } else return false;
+            int value = Integer.parseInt(field);
+            if (value < 0 || value > 255) {
+                throw new IOException();
+            }
+            System.out.println("return true");
+            return true;
         } catch (Exception e) {
+            System.out.println("return false");
             return false;
         }
-
     }
 
     public void defaultButtonEvent () {

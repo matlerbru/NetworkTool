@@ -4,7 +4,7 @@
     <module name="NetworkTool" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="NetworkTool.MainSelector" />
+        <option name="PATTERN" value="NetworkTool.TabSelector" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

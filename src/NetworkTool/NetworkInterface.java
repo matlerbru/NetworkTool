@@ -187,7 +187,7 @@ public class NetworkInterface {
         }
     }
 
-    public static void updateNIC(int index) throws IOException {
+    public static void updateNIC(int index) {
         ProcessBuilder pb = new ProcessBuilder();
 
         pb.command("cmd.exe", "/c", "ipconfig /all");
@@ -296,7 +296,7 @@ public class NetworkInterface {
         }
     }
 
-    public static void pushNIC (NIC nic, int index) throws IOException {
+    public static void pushNIC (NIC nic, int index) {
         String name = NIC.get(index).getDisplayName();
 
         String IpCommand = "netsh interface ipv4 set address name=\"" + name + "\"";
@@ -306,30 +306,34 @@ public class NetworkInterface {
 
         if (nic.isDhcp()) {
             IpCommand = IpCommand + " dhcp";
-        } else  {
+        } else {
             IpCommand = IpCommand + " static " + nic.getIPaddress() + " " + nic.getSubnetMask() + " " + nic.getDefaultGateway();
         }
 
-        System.out.println(IpCommand);
-        ProcessBuilder pb = new ProcessBuilder();
-        pb.command("cmd.exe", "/c", IpCommand);
-        Process processIp = pb.start();
-        pb.command("cmd.exe", "/c", NameCommand);
-        Process processName = pb.start();
+        try {
+            System.out.println(IpCommand);
+            ProcessBuilder pb = new ProcessBuilder();
+            pb.command("cmd.exe", "/c", IpCommand);
+            Process processIp = pb.start();
+            pb.command("cmd.exe", "/c", NameCommand);
+            Process processName = pb.start();
 
-        BufferedReader readerIp = new BufferedReader(new InputStreamReader(processIp.getInputStream()));
+            BufferedReader readerIp = new BufferedReader(new InputStreamReader(processIp.getInputStream()));
 
-        String line = null;
+            String line;
 
-        System.out.println();
-        while ((line = readerIp.readLine()) != null) {
-            System.out.println(line);
-        }
-        BufferedReader readerName = new BufferedReader(new InputStreamReader(processName.getInputStream()));
-        line = null;
-        System.out.println();
-        while ((line = readerName.readLine()) != null) {
-            System.out.println(line);
+            System.out.println();
+            while ((line = readerIp.readLine()) != null) {
+                System.out.println(line);
+            }
+            BufferedReader readerName = new BufferedReader(new InputStreamReader(processName.getInputStream()));
+            line = null;
+            System.out.println();
+            while ((line = readerName.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

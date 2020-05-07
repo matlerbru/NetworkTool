@@ -257,12 +257,20 @@ public class NicTool {
         }
     }
 
-    public void setUiTo (NetworkInterface.NIC nic, boolean updateName) {
+    public void setUiTo (NetworkInterface.NIC nic, boolean updateName, boolean updateMac) {
         NetworkInterface.clone(tempNic, nic);
         dhcp.setSelected(nic.isDhcp());
         setIpFieldsEditable(!nic.isDhcp());
-        if (updateName) name.setText(nic.getDisplayName());
-        macAdress.setText(nic.getMAC());
+        if (updateName) {
+            name.setText(nic.getDisplayName());
+        }
+        if (updateMac) {
+            macAdress.setText(nic.getMAC());
+        }
+    }
+
+    public void setUiTo (NetworkInterface.NIC nic, boolean updateName) {
+        setUiTo(nic, updateName, true);
     }
 
     public void setUiTo (NetworkInterface.NIC nic) {
@@ -291,7 +299,7 @@ public class NicTool {
         } catch (IllegalArgumentException e) {
             Alert errorAlert = new Alert(Alert.AlertType.ERROR);
             errorAlert.setHeaderText("Duplicate name");
-            errorAlert.setContentText("please try again with another name");
+            errorAlert.setContentText("Please try again with another name");
             errorAlert.showAndWait();
         } catch (RuntimeException e) {
         }
@@ -310,7 +318,8 @@ public class NicTool {
         int index = profileSelect.getSelectionModel().getSelectedIndex();
         if (index >= 0) {
             System.out.println(index);
-            setUiTo(profile.getProfile(index), false);
+            NetworkInterface.NIC tempProfile = profile.getProfile(index);
+            setUiTo(profile.getProfile(index), false, false);
         }
     }
 

@@ -86,6 +86,7 @@ public class NicTool {
 
     public void initialize () {
         try {
+            ProfileContainer.loadProfilesFromFile(".profile.xml");
             setNicData();
             updateProfileFromFile(".Profile.xml");
             Path path = Paths.get(".Profile.xml");

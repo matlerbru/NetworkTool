@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    public static MainSelector controller;
+    public static TabSelector controller;
 
     static final int WINDOW_WIDTH = 630;
     static final int WINDOW_HEIGHT = 225;
@@ -17,18 +17,14 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         NetworkInterface.updateNIC();
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("MainSelector.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("TabSelector.fxml"));
         Parent root = loader.load();
         primaryStage.setTitle("Network tool");
         primaryStage.setScene(new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT));
         primaryStage.setMinHeight(230);
         primaryStage.setMinWidth(470);
         primaryStage.show();
-        controller = loader.<MainSelector>getController();
-        ProfileContainer.loadProfilesFromFile(".profile.xml");
-
-        Thread test = new test();
-        test.start();
+        controller = loader.<TabSelector>getController();
     }
 
     public static void main(String[] args) {

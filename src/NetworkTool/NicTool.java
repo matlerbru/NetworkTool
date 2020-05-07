@@ -1,13 +1,12 @@
 package NetworkTool;
 
-import javafx.beans.value.ChangeListener;
-import javafx.event.Event;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -33,7 +32,7 @@ public class NicTool {
     private TextField name;
 
     @FXML
-    private TextField IP;
+    private TextField ip;
 
     @FXML
     private TextField subnetMask;
@@ -63,27 +62,13 @@ public class NicTool {
     private BorderPane setupPane;
 
     @FXML
-    private Label nicLabel;
+    private Button loadProfileButton;
 
     @FXML
-    private Label ipLabel;
+    private Button addProfileButton;
 
     @FXML
-    private Label subnetLabel;
-
-    @FXML
-    private Label gatewayLabel;
-
-    @FXML
-    private Label macLabel;
-
-    @FXML
-    private Label dhcpLabel;
-
-    @FXML
-    private Label nameLabel;
-
-
+    private Button removeProfileButton;
 
     public void initialize () {
         try {
@@ -95,6 +80,42 @@ public class NicTool {
 
             NicSettings.setHgrow(resultPane, Priority.ALWAYS);
             NicSettings.setHgrow(setupPane, Priority.ALWAYS);
+
+            defaultButton.setOnAction(defaultButtonHandler);
+            revertButton.setOnAction(revertButtonHandler);
+            applyButton.setOnAction(applyButtonHandler);
+
+            loadProfileButton.setOnAction(loadProfileButtonHandler);
+            addProfileButton.setOnAction(AddProfileButtonHandler);
+            removeProfileButton.setOnAction(deleteProfileButtonHandler);
+
+            ip.focusedProperty().addListener((obs, oldVal, newVal) -> {
+                if (!newVal) {
+                    ipHandler();
+                }
+            });
+
+            subnetMask.focusedProperty().addListener((obs, oldVal, newVal) -> {
+                if (!newVal) {
+                    subnetMaskHandler();
+                }
+            });
+
+            defaultGateway.focusedProperty().addListener((obs, oldVal, newVal) -> {
+                if (!newVal) {
+                    DefaultGatewayEvent();
+                }
+            });
+
+            name.focusedProperty().addListener((obs, oldVal, newVal) -> {
+                if (!newVal) {
+                    nameHandler();
+                }
+            });
+
+            dhcp.selectedProperty().addListener((obs, oldVal, newVal) -> {
+                dhcpHandler();
+            });
 
         } catch (Exception e) {
         }
@@ -124,23 +145,23 @@ public class NicTool {
 
     public void setIpFieldsEditable (boolean editable) {
         if (NIC.getSelectionModel().getSelectedIndex() >= 0){
-            IP.setEditable(editable);
+            ip.setEditable(editable);
             subnetMask.setEditable(editable);
             defaultGateway.setEditable(editable);
 
-            IP.setDisable(!editable);
+            ip.setDisable(!editable);
             subnetMask.setDisable(!editable);
             defaultGateway.setDisable(!editable);
 
             if (!editable) {
                 int index = NIC.getSelectionModel().getSelectedIndex();
-                IP.setText(NetworkInterface.NIC.get( index ).getIPaddress());
+                ip.setText(NetworkInterface.NIC.get( index ).getIPaddress());
                 subnetMask.setText(NetworkInterface.NIC.get( index ).getSubnetMask());
                 defaultGateway.setText(NetworkInterface.NIC.get( index ).getDefaultGateway());
             } else {
                 if (!isFormattedAsIp(tempNic.getIPaddress())) {
-                    IP.setText("0.0.0.0");
-                } else IP.setText(tempNic.getIPaddress());
+                    ip.setText("0.0.0.0");
+                } else ip.setText(tempNic.getIPaddress());
                 if (!isFormattedAsIp(tempNic.getSubnetMask())) {
                     subnetMask.setText("0.0.0.0");
                 } else subnetMask.setText(tempNic.getSubnetMask());
@@ -151,26 +172,26 @@ public class NicTool {
         }
     }
 
-    public void dhcpEvent () {
+    public void dhcpHandler() {
         setIpFieldsEditable(!dhcp.isSelected());
         tempNic.setDhcp(dhcp.isSelected());
         defaultButton.setDisable(false);
         applyButton.setDisable(false);
     }
 
-    public void ipEvent () {
-        if (isFormattedAsIp(IP.getText()))  {
-            tempNic.setIPaddress(IP.getText());
-        } else if (IP.getText().length() < 7) {
-            IP.setText("0.0.0.0");
+    public void ipHandler() {
+        if (isFormattedAsIp(ip.getText()))  {
+            tempNic.setIPaddress(ip.getText());
+        } else if (ip.getText().length() < 7) {
+            this.ip.setText("0.0.0.0");
         }else {
-            IP.setText(tempNic.getIPaddress());
+            this.ip.setText(tempNic.getIPaddress());
         }
         defaultButton.setDisable(false);
         applyButton.setDisable(false);
     }
 
-    public void subnetMaskEvent () {
+    public void subnetMaskHandler() {
         if (isFormattedAsIp(subnetMask.getText()))  {
             tempNic.setSubnetMask(subnetMask.getText());
         } else if (subnetMask.getText().length() < 7) {
@@ -182,7 +203,7 @@ public class NicTool {
         applyButton.setDisable(false);
     }
 
-    public void DefaultGatewayEvent () {
+    public void DefaultGatewayEvent() {
         if (isFormattedAsIp(defaultGateway.getText())) {
             tempNic.setDefaultGateway(defaultGateway.getText());
         } else if (defaultGateway.getText().length() < 7) {
@@ -194,7 +215,7 @@ public class NicTool {
         applyButton.setDisable(false);
     }
 
-    public void nameEvent () {
+    public void nameHandler() {
         tempNic.setDisplayName(name.getText());
         defaultButton.setDisable(false);
         applyButton.setDisable(false);
@@ -210,41 +231,60 @@ public class NicTool {
                     if (value < 0 || value > 255) {
                         throw new IOException();
                     }
-                    field = field.replace(string + ".", "");
+                    field = field.substring(dot + 1);
+                } else {
+                    throw new IOException();
                 }
             }
             int value = Integer.parseInt(field);
             if (value < 0 || value > 255) {
                 throw new IOException();
             }
-            System.out.println("return true");
             return true;
         } catch (Exception e) {
-            System.out.println("return false");
             return false;
         }
     }
 
-    public void defaultButtonEvent () {
-        if (tempNic.getName() != null) {
-            NetworkInterface.clone(tempNic, NetworkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
-            setUiTo(tempNic);
-            defaultButton.setDisable(true);
-            applyButton.setDisable(true);
+    EventHandler<ActionEvent> defaultButtonHandler = new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+            if (tempNic.getName() != null) {
+                NetworkInterface.clone(tempNic, NetworkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
+                setUiTo(tempNic);
+                defaultButton.setDisable(true);
+                applyButton.setDisable(true);
+            }
         }
-    }
+    };
 
-    public void revertButtonEvent () throws IOException {
-        if (lastSetup.getName() != null) {
-            revertButton.setDisable(true);
-            NetworkInterface.clone(tempNic, lastSetup);
+    EventHandler<ActionEvent> revertButtonHandler = new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+            if (lastSetup.getName() != null) {
+                revertButton.setDisable(true);
+                NetworkInterface.clone(tempNic, lastSetup);
+                NetworkInterface.pushNIC(tempNic, NIC.getSelectionModel().getSelectedIndex());
+                NetworkInterface.updateNIC(NIC.getSelectionModel().getSelectedIndex());
+                setUiTo(NetworkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
+                defaultButton.setDisable(true);
+                applyButton.setDisable(true);
+            }
+        }
+    };
+
+    EventHandler<ActionEvent> applyButtonHandler = new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+            NetworkInterface.clone(lastSetup, NetworkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
+            revertButton.setDisable(false);
             NetworkInterface.pushNIC(tempNic, NIC.getSelectionModel().getSelectedIndex());
             NetworkInterface.updateNIC(NIC.getSelectionModel().getSelectedIndex());
             setUiTo(NetworkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
             defaultButton.setDisable(true);
             applyButton.setDisable(true);
         }
-    }
+    };
 
     public void setUiTo (NetworkInterface.NIC nic, boolean updateName, boolean updateMac) {
         NetworkInterface.clone(tempNic, nic);
@@ -266,57 +306,55 @@ public class NicTool {
         setUiTo(nic, true);
     }
 
-    public void applyButtonEvent () throws IOException {
-        NetworkInterface.clone(lastSetup, NetworkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
-        revertButton.setDisable(false);
-        NetworkInterface.pushNIC(tempNic, NIC.getSelectionModel().getSelectedIndex());
-        NetworkInterface.updateNIC(NIC.getSelectionModel().getSelectedIndex());
-        setUiTo(NetworkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
-        defaultButton.setDisable(true);
-        applyButton.setDisable(true);
-    }
-
-    public void AddProfileButtonEvent () throws IOException {
-        TextInputDialog dialog = new TextInputDialog("Enter profile name.");
-        dialog.setTitle("Enter profile name");
-        dialog.setContentText("Name:");
-        Optional<String> result = dialog.showAndWait();
-        try {
-            profile.addProfile(tempNic, result.get().trim());
-            profileSelect.getItems().add(result.get());
-            ProfileContainer.saveProfileToFile(".profile.xml", tempNic, result.get());
-        } catch (IllegalArgumentException e) {
-            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-            errorAlert.setHeaderText("Duplicate name");
-            errorAlert.setContentText("Please try again with another name");
-            errorAlert.showAndWait();
-        } catch (RuntimeException e) {
+    EventHandler<ActionEvent> AddProfileButtonHandler = new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+            TextInputDialog dialog = new TextInputDialog("Enter profile name.");
+            dialog.setTitle("Enter profile name");
+            dialog.setContentText("Name:");
+            Optional<String> result = dialog.showAndWait();
+            try {
+                profile.addProfile(tempNic, result.get().trim());
+                profileSelect.getItems().add(result.get());
+                ProfileContainer.saveProfileToFile(".profile.xml", tempNic, result.get());
+            } catch (IllegalArgumentException e) {
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setHeaderText("Duplicate name");
+                errorAlert.setContentText("Please try again with another name");
+                errorAlert.showAndWait();
+            } catch (RuntimeException e) {
+            }
         }
-    }
+    };
 
-    public void deleteProfileButtonEvent () throws IOException {
-        int index = profileSelect.getSelectionModel().getSelectedIndex();
-        if (index >= 0) {
-            profile.removeProfile(index);
-            profileSelect.getItems().remove(index);
-            ProfileContainer.removeProfileFromFile(".Profile.xml", index);
+    EventHandler<ActionEvent> deleteProfileButtonHandler = new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+            int index = profileSelect.getSelectionModel().getSelectedIndex();
+            if (index >= 0) {
+                profile.removeProfile(index);
+                profileSelect.getItems().remove(index);
+                ProfileContainer.removeProfileFromFile(".Profile.xml", index);
+            }
         }
-    }
+    };
 
-    public void loadProfileButtonEvent () {
-        int index = profileSelect.getSelectionModel().getSelectedIndex();
-        if (index >= 0) {
-            System.out.println(index);
-            NetworkInterface.NIC tempProfile = profile.getProfile(index);
-            setUiTo(profile.getProfile(index), false, false);
+    EventHandler<ActionEvent> loadProfileButtonHandler = new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+            int index = profileSelect.getSelectionModel().getSelectedIndex();
+            if (index >= 0) {
+                System.out.println(index);
+                NetworkInterface.NIC tempProfile = profile.getProfile(index);
+                setUiTo(profile.getProfile(index), false, false);
+            }
         }
-    }
+    };
 
     private void updateProfileFromFile (String fileName) throws IOException {
         ProfileContainer.Profiles profiles = new ProfileContainer.Profiles();
         profiles = ProfileContainer.loadProfilesFromFile(fileName);
         for (int i = 0; i < profiles.size(); i++) {
-
             profile.addProfile(profiles.getNic(i), profiles.getProfileName(i));
             profileSelect.getItems().add(profiles.getProfileName(i));
         }

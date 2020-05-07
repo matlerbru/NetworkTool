@@ -26,9 +26,9 @@
                         <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <Button fx:id="addProfile" mnemonicParsing="false" onAction="#AddProfileButtonEvent" prefWidth="60.0" text="Add" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
-                        <Button fx:id="loadProfile" mnemonicParsing="false" onAction="#loadProfileButtonEvent" prefWidth="60.0" text="Load" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
-                        <Button fx:id="removeProfile" mnemonicParsing="false" onAction="#deleteProfileButtonEvent" prefWidth="60.0" text="Delete" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+                        <Button fx:id="addProfileButton" mnemonicParsing="false" prefWidth="60.0" text="Add" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+                        <Button fx:id="loadProfileButton" mnemonicParsing="false" prefWidth="60.0" text="Load" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+                        <Button fx:id="removeProfileButton" mnemonicParsing="false" prefWidth="60.0" text="Delete" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
                     </children>
                 </GridPane>
             </bottom>
@@ -90,12 +90,12 @@
                         <Label fx:id="macLabel" ellipsisString="" text="MAC:" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                         <Label fx:id="dhcpLabel" ellipsisString="" text="DHCP:" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                         <Label fx:id="nameLabel" ellipsisString="" text="Name:" GridPane.columnIndex="3" GridPane.rowIndex="5" />
-                        <TextField fx:id="IP" alignment="CENTER" disable="true" onAction="#ipEvent" onInputMethodTextChanged="#ipEvent" onKeyPressed="#ipEvent" onKeyReleased="#ipEvent" onKeyTyped="#ipEvent" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-                        <TextField fx:id="subnetMask" alignment="CENTER" disable="true" onAction="#subnetMaskEvent" onInputMethodTextChanged="#subnetMaskEvent" onKeyPressed="#subnetMaskEvent" onKeyReleased="#subnetMaskEvent" onKeyTyped="#subnetMaskEvent" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-                        <TextField fx:id="defaultGateway" alignment="CENTER" disable="true" onAction="#DefaultGatewayEvent" onInputMethodTextChanged="#DefaultGatewayEvent" onKeyPressed="#DefaultGatewayEvent" onKeyReleased="#DefaultGatewayEvent" onKeyTyped="#DefaultGatewayEvent" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+                        <TextField fx:id="ip" alignment="CENTER" disable="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+                        <TextField fx:id="subnetMask" alignment="CENTER" disable="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+                        <TextField fx:id="defaultGateway" alignment="CENTER" disable="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
                         <TextField fx:id="macAdress" disable="true" editable="false" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-                        <CheckBox fx:id="dhcp" disable="true" mnemonicParsing="false" onAction="#dhcpEvent" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-                        <TextField fx:id="name" disable="true" onAction="#nameEvent" onInputMethodTextChanged="#nameEvent" onKeyPressed="#nameEvent" onKeyReleased="#nameEvent" onKeyTyped="#nameEvent" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+                        <CheckBox fx:id="dhcp" disable="true" mnemonicParsing="false" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+                        <TextField fx:id="name" disable="true" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
                     </children>
                 </GridPane>
             </center>
@@ -122,9 +122,9 @@
                         <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <Button fx:id="applyButton" disable="true" mnemonicParsing="false" onAction="#applyButtonEvent" prefWidth="60.0" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Button fx:id="revertButton" disable="true" mnemonicParsing="false" onAction="#revertButtonEvent" prefWidth="60.0" text="Revert" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                        <Button fx:id="defaultButton" disable="true" mnemonicParsing="false" onAction="#defaultButtonEvent" prefWidth="60.0" text="Default" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                        <Button fx:id="applyButton" disable="true" mnemonicParsing="false" prefWidth="60.0" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Button fx:id="revertButton" disable="true" mnemonicParsing="false" prefWidth="60.0" text="Revert" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <Button fx:id="defaultButton" disable="true" mnemonicParsing="false" prefWidth="60.0" text="Default" GridPane.columnIndex="5" GridPane.rowIndex="1" />
                     </children>
                 </GridPane>
             </bottom>

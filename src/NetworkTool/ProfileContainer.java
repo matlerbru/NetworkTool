@@ -48,33 +48,34 @@ public class ProfileContainer {
         removeProfile(index);
     }
 
-    public static void saveProfileToFile(String fileName, NetworkInterface.NIC nic, String name) throws IOException {
+    public static void saveProfileToFile(String fileName, NetworkInterface.NIC nic, String name) {
+        try {
+            File file = new File(fileName);
 
+            if (!file.exists()) {
+                createFile(fileName);
+            }
 
-        File file = new File(fileName);
+            PrintStream fileWriter = new PrintStream(new FileOutputStream(fileName, true));
 
-        if (!file.exists()) {
-            createFile(fileName);
+            fileWriter.println("<profile>");
+            fileWriter.println("    <profileName>" + name + "</profileName>");
+            fileWriter.println("    <name>" + nic.getName() + "</name>");
+            fileWriter.println("    <displayName>" + nic.getDisplayName() + "</displayName>");
+            fileWriter.println("    <DHCP>" + nic.isDhcp() + "</DHCP>");
+            if (!nic.isDhcp()) {
+                fileWriter.println("    <IP>" + nic.getIPaddress() + "</IP>");
+                fileWriter.println("    <subnetMask>" + nic.getSubnetMask() + "</subnetMask>");
+                fileWriter.println("    <defaultGateway>" + nic.getDefaultGateway() + "</defaultGateway>");
+            }
+            fileWriter.println("</profile>");
+
+            fileWriter.println();
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        PrintStream fileWriter = new PrintStream(new FileOutputStream(fileName, true));
-
-        fileWriter.println("<profile>");
-        fileWriter.println("    <profileName>" + name + "</profileName>");
-        fileWriter.println("    <name>" + nic.getName() + "</name>");
-        fileWriter.println("    <displayName>" + nic.getDisplayName() + "</displayName>");
-        fileWriter.println("    <DHCP>" + nic.isDhcp() + "</DHCP>");
-        if (!nic.isDhcp()) {
-            fileWriter.println("    <IP>" + nic.getIPaddress() + "</IP>");
-            fileWriter.println("    <subnetMask>" + nic.getSubnetMask() + "</subnetMask>");
-            fileWriter.println("    <defaultGateway>" + nic.getDefaultGateway() + "</defaultGateway>");
-        }
-        fileWriter.println("</profile>");
-
-
-        fileWriter.println();
-        fileWriter.flush();
-        fileWriter.close();
     }
 
     private static void createFile(String fileName, boolean header) throws IOException {

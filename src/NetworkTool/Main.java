@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+
 public class Main extends Application {
 
     public static TabSelector controller;
@@ -17,7 +18,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         NetworkInterface.updateNIC();
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("TabSelector.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Resources/TabSelector.fxml"));
         Parent root = loader.load();
         primaryStage.setTitle("Network tool");
         primaryStage.setScene(new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT));

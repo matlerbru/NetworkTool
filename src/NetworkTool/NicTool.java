@@ -123,8 +123,8 @@ public class NicTool {
 
     public void setNicData() {
         NIC.getItems().clear();
-        for (int i = 0; i < NetworkInterface.NIC.size(); i++) {
-            NIC.getItems().add(NetworkInterface.NIC.get(i).getName());
+        for (NetworkInterface.NIC nic : NetworkInterface.getNic()) {
+            NIC.getItems().add(nic.getName());
         }
     }
 

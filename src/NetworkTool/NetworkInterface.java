@@ -102,6 +102,11 @@ public class NetworkInterface {
     }
 
 
+
+    public static ArrayList<NIC> getNic () {
+        return NIC;
+    }
+
     public static void updateNIC() throws IOException {
 
         NIC.clear();

@@ -121,7 +121,7 @@ public class NicTool {
         }
     }
 
-    public void setNicData() {
+    private void setNicData() {
         NIC.getItems().clear();
         for (NetworkInterface.NIC nic : NetworkInterface.getNic()) {
             NIC.getItems().add(nic.getName());

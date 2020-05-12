@@ -101,98 +101,32 @@ public class NetworkInterface {
         }
     }
 
-
-
     public static ArrayList<Nic> getNic () {
         return NIC;
     }
 
-    public static void updateNIC() throws IOException {
-
+    public static void updateAllNic() {
         NIC.clear();
-
-        ProcessBuilder pb = new ProcessBuilder();
-
-        pb.command("cmd.exe", "/c", "ipconfig /all");
-
-        Nic nic = new Nic();
-
-        try {
-            Process process = pb.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-            String line = null;
-            String lastLine = null;
-            boolean newNIC = false;
-
-            while ((line = reader.readLine()) != null) {
-                if (line.length() == 0) {
-                    try {
-                        if (lastLine.contains(":") && !lastLine.contains(". .")) {
-                            newNIC = true;
-                            nic.displayName = lastLine.replace(":", "");
-                            nic.displayName = nic.displayName.substring( nic.displayName.indexOf("adapter") + 8);
-                        } else {
-                            newNIC = false;
-                        }
-                    } catch (Exception e) {
-
-                    }
-                }
-
-                if (newNIC) {
-
-                    if (line.contains("Description . . . . . . . . . . . : ")) {
-                        nic.name = line.replace("Description . . . . . . . . . . . : ", "");
-                        nic.name = nic.name.substring(3, nic.name.length());
-                    }
-
-                    if (line.contains("Physical Address. . . . . . . . . : ")) {
-                        nic.MAC = line.replace("Physical Address. . . . . . . . . : ", "");
-                        nic.MAC = nic.MAC.replace(" ", "");
-                    }
-
-                    if (line.contains("IPv4 Address. . . . . . . . . . . : ")) {
-                        nic.IPaddress = line.replace("IPv4 Address. . . . . . . . . . . : ", "");
-                        nic.IPaddress = nic.IPaddress.replace(" ", "");
-                        nic.IPaddress = nic.IPaddress.replace("(Preferred)", "");
-                    }
-
-                    if (line.contains("Subnet Mask . . . . . . . . . . . : ")) {
-                        nic.subnetMask = line.replace("Subnet Mask . . . . . . . . . . . : ", "");
-                        nic.subnetMask = nic.subnetMask.replace(" ", "");
-                    }
-
-                    if (line.contains("Default Gateway . . . . . . . . . : ")) {
-                        nic.defaultGateway = line.replace("Default Gateway . . . . . . . . . : ", "");
-                        nic.defaultGateway = nic.defaultGateway.replace(" ", "");
-                    }
-
-                    if (line.contains("DHCP Enabled. . . . . . . . . . . : ")) {
-                        nic.dhcp = (line.contains("Yes"));
-                    }
-
-                } else {
-                    try {
-                        if (nic.displayName.length() > 0) {
-                            NIC.add(nic);
-                           nic = new Nic(null, null, null, null, false, null, null);
-                        }
-                    } catch (Exception e) {
-
-                    }
-                }
-                lastLine = line;
+        int index = 0;
+        while (true) {
+            try {
+                Nic nic = readNic(index);
+                NIC.add(index, nic);
+                index++;
+            } catch (IndexOutOfBoundsException e) {
+                break;
             }
-            int exitCode = process.waitFor();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 
-    public static void updateNIC(int index) {
+    public static void updateNic(int index) {
+        System.out.println("Index: " + index);
+        Nic nic = readNic(index);
+        NIC.remove(index);
+        NIC.add(index, nic);
+    }
+
+    public static Nic readNic(int index) {
         ProcessBuilder pb = new ProcessBuilder();
 
         pb.command("cmd.exe", "/c", "ipconfig /all");
@@ -259,8 +193,7 @@ public class NetworkInterface {
                     try {
                         if (nic.displayName.length() > 0) {
                             if (readIndex == index) {
-                                NIC.remove(index);
-                                NIC.add(index, nic);
+                                return nic;
                             }
                             readIndex++;
                             nic = new Nic(null, null, null, null, false, null, null);
@@ -271,12 +204,11 @@ public class NetworkInterface {
                 }
                 lastLine = line;
             }
-            int exitCode = process.waitFor();
+            throw new IndexOutOfBoundsException("Index not found");
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
+        return null;
     }
 
 

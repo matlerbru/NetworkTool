@@ -238,32 +238,18 @@ public class NicTool {
         }
     }
 
-    EventHandler<ActionEvent> revertButtonHandler = new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent event) {
-            if (lastSetup.getName() != null) {
-                NetworkInterface.clone(tempNic, lastSetup);
-                NetworkInterface.pushNIC(tempNic, nicSelector.getSelectionModel().getSelectedIndex());
-                NetworkInterface.updateNIC(nicSelector.getSelectionModel().getSelectedIndex());
-                setUiTo(NetworkInterface.NIC.get(nicSelector.getSelectionModel().getSelectedIndex()));
-                applyButton.setDisable(true);
-            }
-        }
-    };
-
     EventHandler<ActionEvent> applyButtonHandler = new EventHandler<ActionEvent>() {
         @Override
         public void handle(ActionEvent event) {
             NetworkInterface.clone(lastSetup, NetworkInterface.NIC.get(nicSelector.getSelectionModel().getSelectedIndex()));
             try {
                 NetworkInterface.pushNIC(tempNic, nicSelector.getSelectionModel().getSelectedIndex());
-                NetworkInterface.updateNIC(nicSelector.getSelectionModel().getSelectedIndex());
+                NetworkInterface.updateNic(nicSelector.getSelectionModel().getSelectedIndex());
                 setUiTo(NetworkInterface.NIC.get(nicSelector.getSelectionModel().getSelectedIndex()));
                 applyButton.setDisable(true);
             } catch (IllegalStateException e) {
                 e.printStackTrace();
             }
-
         }
     };
 

@@ -261,10 +261,15 @@ public class NicTool {
         public void handle(ActionEvent event) {
             NetworkInterface.clone(lastSetup, NetworkInterface.NIC.get(nicSelector.getSelectionModel().getSelectedIndex()));
             revertButton.setDisable(false);
-            NetworkInterface.pushNIC(tempNic, nicSelector.getSelectionModel().getSelectedIndex());
-            NetworkInterface.updateNIC(nicSelector.getSelectionModel().getSelectedIndex());
-            setUiTo(NetworkInterface.NIC.get(nicSelector.getSelectionModel().getSelectedIndex()));
-            applyButton.setDisable(true);
+            try {
+                NetworkInterface.pushNIC(tempNic, nicSelector.getSelectionModel().getSelectedIndex());
+                NetworkInterface.updateNIC(nicSelector.getSelectionModel().getSelectedIndex());
+                setUiTo(NetworkInterface.NIC.get(nicSelector.getSelectionModel().getSelectedIndex()));
+                applyButton.setDisable(true);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+
         }
     };
 

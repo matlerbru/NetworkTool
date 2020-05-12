@@ -301,7 +301,7 @@ public class NetworkInterface {
         }
     }
 
-    public static void pushNIC (Nic nic, int index) {
+    public static void pushNIC (Nic nic, int index) throws IllegalStateException {
         String name = NIC.get(index).getDisplayName();
 
         String IpCommand = "netsh interface ipv4 set address name=\"" + name + "\"";
@@ -330,14 +330,12 @@ public class NetworkInterface {
             System.out.println();
             while ((line = readerIp.readLine()) != null) {
                 System.out.println(line);
+                if (line.length() > 0 && !line.contains("DHCP is already enabled on this interface.")) {
+                    System.out.println("Throw");
+                    throw new IllegalStateException(line);
+                }
             }
-            BufferedReader readerName = new BufferedReader(new InputStreamReader(processName.getInputStream()));
-            line = null;
-            System.out.println();
-            while ((line = readerName.readLine()) != null) {
-                System.out.println(line);
-            }
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

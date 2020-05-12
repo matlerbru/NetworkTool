@@ -23,7 +23,7 @@ public class NetworkScannerService {
 
     public Thread scan(int nicIndex) {
         return new Thread(() -> {
-            NetworkInterface.NIC nic = new NetworkInterface.NIC();
+            NetworkInterface.Nic nic = new NetworkInterface.Nic();
             NetworkInterface.clone(nic, NetworkInterface.NIC.get(nicIndex));
             try {
                 progress = 0;
@@ -34,7 +34,7 @@ public class NetworkScannerService {
         });
     }
 
-    private void scanNetwork(NetworkInterface.NIC nic) {
+    private void scanNetwork(NetworkInterface.Nic nic) {
         try {
 
             LinkedList<Thread> threads = new LinkedList<>();
@@ -60,7 +60,7 @@ public class NetworkScannerService {
         }
     }
 
-    private Thread startThreadAndPingDevice(NetworkInterface.NIC nic, int i) {
+    private Thread startThreadAndPingDevice(NetworkInterface.Nic nic, int i) {
         return new Thread(() -> {
             try {
             String address = formatIpAddress(nic);
@@ -78,7 +78,7 @@ public class NetworkScannerService {
         });
     }
 
-    private void pingDeviceAndGetInformation(String address, NetworkInterface.NIC nic) throws IllegalStateException {
+    private void pingDeviceAndGetInformation(String address, NetworkInterface.Nic nic) throws IllegalStateException {
         String hostName = getHostNameFromIp(address, Main.controller.getNetworkScanner().getTimeout());
         if ( hostName != null ) {
             String macAddr = getMacFromArpTable(address, nic);
@@ -107,7 +107,7 @@ public class NetworkScannerService {
         });
     }
 
-    private String formatIpAddress(NetworkInterface.NIC nic) {
+    private String formatIpAddress(NetworkInterface.Nic nic) {
         try {
             return nic.getIPaddress().substring(0, Utility.ordinalIndexOf(nic.getIPaddress(), ".", 3) + 1);
         } catch (Exception e) {
@@ -155,7 +155,7 @@ public class NetworkScannerService {
         return null;
     }
 
-    private String getMacFromArpTable (String ipAddr, NetworkInterface.NIC nic) {
+    private String getMacFromArpTable (String ipAddr, NetworkInterface.Nic nic) {
         ProcessBuilder pb = new ProcessBuilder();
         pb.command("cmd.exe", "/c", "arp -a");
         try {

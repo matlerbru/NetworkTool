@@ -8,14 +8,14 @@ import java.util.ArrayList;
 
 public class NetworkInterface {
 
-    public static ArrayList<NIC> NIC = new ArrayList<NIC>();
+    public static ArrayList<Nic> NIC = new ArrayList<Nic>();
 
-    public static class NIC {
-        public NIC() {
+    public static class Nic {
+        public Nic() {
 
         }
 
-        public NIC(String name, String displayName, String MAC, String IPaddress, boolean dhcp, String subnetMask, String defaultGateway) {
+        public Nic(String name, String displayName, String MAC, String IPaddress, boolean dhcp, String subnetMask, String defaultGateway) {
             this.name = name;
             this.displayName = displayName;
             this.MAC = MAC;
@@ -89,7 +89,7 @@ public class NetworkInterface {
             this.name = name;
         }
 
-        public void printNIC(NIC nic) {
+        public void printNIC(Nic nic) {
             System.out.println("Display name: " + this.displayName);
             System.out.println("Name: " + this.name);
             System.out.println("DHCP: " + this.dhcp);
@@ -103,7 +103,7 @@ public class NetworkInterface {
 
 
 
-    public static ArrayList<NIC> getNic () {
+    public static ArrayList<Nic> getNic () {
         return NIC;
     }
 
@@ -115,7 +115,7 @@ public class NetworkInterface {
 
         pb.command("cmd.exe", "/c", "ipconfig /all");
 
-        NIC nic = new NIC();
+        Nic nic = new Nic();
 
         try {
             Process process = pb.start();
@@ -176,7 +176,7 @@ public class NetworkInterface {
                     try {
                         if (nic.displayName.length() > 0) {
                             NIC.add(nic);
-                           nic = new NIC(null, null, null, null, false, null, null);
+                           nic = new Nic(null, null, null, null, false, null, null);
                         }
                     } catch (Exception e) {
 
@@ -197,7 +197,7 @@ public class NetworkInterface {
 
         pb.command("cmd.exe", "/c", "ipconfig /all");
         int readIndex = 0;
-        NIC nic = new NIC();
+        Nic nic = new Nic();
 
         try {
             Process process = pb.start();
@@ -263,7 +263,7 @@ public class NetworkInterface {
                                 NIC.add(index, nic);
                             }
                             readIndex++;
-                            nic = new NIC(null, null, null, null, false, null, null);
+                            nic = new Nic(null, null, null, null, false, null, null);
                         }
                     } catch (Exception e) {
 
@@ -280,7 +280,7 @@ public class NetworkInterface {
     }
 
 
-    public static void printNIC(NIC nic) {
+    public static void printNIC(Nic nic) {
         System.out.println("Display name: " + nic.getDisplayName());
         System.out.println("Name: " + nic.getName());
         System.out.println("DHCP: " + nic.isDhcp());
@@ -301,7 +301,7 @@ public class NetworkInterface {
         }
     }
 
-    public static void pushNIC (NIC nic, int index) {
+    public static void pushNIC (Nic nic, int index) {
         String name = NIC.get(index).getDisplayName();
 
         String IpCommand = "netsh interface ipv4 set address name=\"" + name + "\"";
@@ -342,7 +342,7 @@ public class NetworkInterface {
         }
     }
 
-    public static void clone(NIC destination, NIC source) {
+    public static void clone(Nic destination, Nic source) {
         destination.name = source.name;
         destination.displayName = source.displayName;
         destination.dhcp = source.dhcp;

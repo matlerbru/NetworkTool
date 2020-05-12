@@ -154,7 +154,7 @@ public class NetworkScanner implements Initializable {
     private void setNicData() {
         nicSelector.getItems().clear();
         nicSelector.getItems().add("All");
-        for (NetworkInterface.NIC nic : NetworkInterface.getNic()) {
+        for (NetworkInterface.Nic nic : NetworkInterface.getNic()) {
             nicSelector.getItems().add(nic.getName());
         }
     }

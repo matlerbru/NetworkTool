@@ -41,9 +41,6 @@ public class NicTool {
     private TextField defaultGateway;
 
     @FXML
-    private Button revertButton;
-
-    @FXML
     private Button applyButton;
 
     @FXML
@@ -78,7 +75,6 @@ public class NicTool {
             NicSettings.setHgrow(resultPane, Priority.ALWAYS);
             NicSettings.setHgrow(setupPane, Priority.ALWAYS);
 
-            revertButton.setOnAction(revertButtonHandler);
             applyButton.setOnAction(applyButtonHandler);
 
             loadProfileButton.setOnAction(loadProfileButtonHandler);
@@ -246,7 +242,6 @@ public class NicTool {
         @Override
         public void handle(ActionEvent event) {
             if (lastSetup.getName() != null) {
-                revertButton.setDisable(true);
                 NetworkInterface.clone(tempNic, lastSetup);
                 NetworkInterface.pushNIC(tempNic, nicSelector.getSelectionModel().getSelectedIndex());
                 NetworkInterface.updateNIC(nicSelector.getSelectionModel().getSelectedIndex());
@@ -260,7 +255,6 @@ public class NicTool {
         @Override
         public void handle(ActionEvent event) {
             NetworkInterface.clone(lastSetup, NetworkInterface.NIC.get(nicSelector.getSelectionModel().getSelectedIndex()));
-            revertButton.setDisable(false);
             try {
                 NetworkInterface.pushNIC(tempNic, nicSelector.getSelectionModel().getSelectedIndex());
                 NetworkInterface.updateNIC(nicSelector.getSelectionModel().getSelectedIndex());

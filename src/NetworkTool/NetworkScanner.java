@@ -25,7 +25,7 @@ public class NetworkScanner implements Initializable {
     private HBox networkScanner;
 
     @FXML
-    private ComboBox<String> NIC;
+    private ComboBox<String> nicSelector;
 
     @FXML
     private BorderPane setupPane;
@@ -123,7 +123,7 @@ public class NetworkScanner implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setNicData();
-        NIC.getSelectionModel().selectFirst();
+        nicSelector.getSelectionModel().selectFirst();
         progressBar.setVisible(false);
         initializeTable();
 
@@ -152,15 +152,15 @@ public class NetworkScanner implements Initializable {
     }
 
     private void setNicData() {
-        NIC.getItems().clear();
-        NIC.getItems().add("All");
+        nicSelector.getItems().clear();
+        nicSelector.getItems().add("All");
         for (NetworkInterface.NIC nic : NetworkInterface.getNic()) {
-            NIC.getItems().add(nic.getName());
+            nicSelector.getItems().add(nic.getName());
         }
     }
 
     public void startScan() {
-            if (NIC.getSelectionModel().getSelectedIndex() == 0) {
+            if (nicSelector.getSelectionModel().getSelectedIndex() == 0) {
                 scanAllNic();
             } else {
                 scanSingleNic();
@@ -205,7 +205,7 @@ public class NetworkScanner implements Initializable {
 
     private void scanSingleNic() {
         NetworkScannerService scanner = new NetworkScannerService();
-        Thread scan = scanner.scan(NIC.getSelectionModel().getSelectedIndex()-1);
+        Thread scan = scanner.scan(nicSelector.getSelectionModel().getSelectedIndex()-1);
         scan.start();
 
         new Thread(() -> {

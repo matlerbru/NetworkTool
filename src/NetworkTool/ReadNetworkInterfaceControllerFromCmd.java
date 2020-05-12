@@ -4,102 +4,127 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class ReadNetworkInterfaceControllerFromCmd {
+class ReadNetworkInterfaceControllerFromCmd {
 
-    protected static NetworkInterfaceController get(int index) {
-        ProcessBuilder pb = new ProcessBuilder();
+    private NetworkInterfaceController nic = new NetworkInterfaceController();
 
-        pb.command("cmd.exe", "/c", "ipconfig /all");
+    private String lineBeingProcessed;
+
+    private String previousLine;
+
+    private boolean newNIC;
+
+    private BufferedReader textStream;
+
+    protected NetworkInterfaceController get(int index) {
         int readIndex = 0;
-        NetworkInterfaceController nic = new NetworkInterfaceController();
+        receiveTextStreamFromCmd();
+        while ((lineBeingProcessed = getNextLineFromStream()) != null) {
+            determineIfNewNic();
+            if (newNIC) {
+                extractNetworkInterfaceController();
+            } else if (nic.getDisplayName() != null) {
+                if (readIndex == index) {
+                    return nic;
+                }
+                readIndex++;
+                nic = new NetworkInterfaceController();
+            }
+        }
+        throw new IndexOutOfBoundsException("Index not found");
+    }
 
+    private void receiveTextStreamFromCmd() {
+        ProcessBuilder pb = new ProcessBuilder();
+        pb.command("cmd.exe", "/c", "ipconfig /all");
         try {
             Process process = pb.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-            String line;
-            String lastLine = null;
-            boolean newNIC = false;
-
-            while ((line = reader.readLine()) != null) {
-                if (line.length() == 0) {
-                    try {
-                        if (lastLine.contains(":") && !lastLine.contains(". .")) {
-                            newNIC = true;
-                            String displayName = lastLine.replace(":", "");
-                            displayName = displayName.substring(displayName.indexOf("adapter") + 8);
-                            nic.setDisplayName(displayName);
-                        } else {
-                            newNIC = false;
-                        }
-                    } catch (Exception e) {
-
-                    }
-                }
-
-                if (newNIC) {
-
-                    if (line.contains("Description . . . . . . . . . . . : ")) {
-                        String name = line.replace("Description . . . . . . . . . . . : ", "");
-                        name = name.substring(3);
-                        nic.setName(name);
-                    }
-
-                    if (line.contains("Physical Address. . . . . . . . . : ")) {
-                        String mac = line.replace("Physical Address. . . . . . . . . : ", "");
-                        mac = mac.replace(" ", "");
-                        nic.setMac(mac);
-                    }
-
-                    if (line.contains("IPv4 Address. . . . . . . . . . . : ")) {
-                        String ip = line.replace("IPv4 Address. . . . . . . . . . . : ", "");
-                        ip = ip.replace(" ", "");
-                        ip = ip.replace("(Preferred)", "");
-                        ip = ip.replace("(Tentative)", "");
-                        nic.setIPaddress(ip);
-                    }
-
-                    if (line.contains("Subnet Mask . . . . . . . . . . . : ")) {
-                        String subnetMask = line.replace("Subnet Mask . . . . . . . . . . . : ", "");
-                        subnetMask = subnetMask.replace(" ", "");
-                        nic.setSubnetMask(subnetMask);
-                    }
-
-                    if (line.contains("Default Gateway . . . . . . . . . : ")) {
-                        String defaultGateway = line.replace("Default Gateway . . . . . . . . . : ", "");
-                        defaultGateway = defaultGateway.replace(" ", "");
-                        nic.setDefaultGateway(defaultGateway);
-                    }
-
-                    if (line.contains("DHCP Enabled. . . . . . . . . . . : ")) {
-                        nic.setDhcp(line.contains("Yes"));
-                    }
-
-                } else {
-                    try {
-                        if (nic.getDisplayName().length() > 0) {
-                            if (readIndex == index) {
-                                return nic;
-                            }
-                            readIndex++;
-                            nic = new NetworkInterfaceController(null, null, null, null, false, null, null);
-                        }
-                    } catch (Exception e) {
-
-                    }
-                }
-                lastLine = line;
-            }
-            throw new IndexOutOfBoundsException("Index not found");
+            textStream = new BufferedReader(new InputStreamReader(process.getInputStream()));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+    }
 
+    private String getNextLineFromStream() {
+        try {
+            return textStream.readLine();
+        } catch (IOException e) {
+            return "";
+        }
+    }
 
+    private void determineIfNewNic() {
+        try {
+            if (lineBeingProcessed.length() == 0) {
+                if (previousLine.contains(":") && !previousLine.contains(". .")) {
+                    newNIC = true;
+                    String displayName = previousLine.replace(":", "");
+                    displayName = displayName.substring(displayName.indexOf("adapter") + 8);
+                    nic.setDisplayName(displayName);
+                } else {
+                    newNIC = false;
+                }
+            }
+        } catch (Exception e) {
+        } finally {
+            previousLine = lineBeingProcessed;
+        }
+    }
 
+    private void extractNetworkInterfaceController() {
+        extractNicName();
+        extractNicMac();
+        extractNicIp();
+        extractNicSubnetMask();
+        extractNicDefaultGateway();
+        extractNicDhcpEnabled();
+    }
 
+    private void extractNicDhcpEnabled() {
+        if (lineBeingProcessed.contains("DHCP Enabled. . . . . . . . . . . : ")) {
+            nic.setDhcp(lineBeingProcessed.contains("Yes"));
+        }
+    }
 
+    private void extractNicDefaultGateway() {
+        if (lineBeingProcessed.contains("Default Gateway . . . . . . . . . : ")) {
+            String defaultGateway = lineBeingProcessed.replace("Default Gateway . . . . . . . . . : ", "");
+            defaultGateway = defaultGateway.replace(" ", "");
+            nic.setDefaultGateway(defaultGateway);
+        }
+    }
 
+    private void extractNicSubnetMask() {
+        if (lineBeingProcessed.contains("Subnet Mask . . . . . . . . . . . : ")) {
+            String subnetMask = lineBeingProcessed.replace("Subnet Mask . . . . . . . . . . . : ", "");
+            subnetMask = subnetMask.replace(" ", "");
+            nic.setSubnetMask(subnetMask);
+        }
+    }
+
+    private void extractNicIp() {
+        if (lineBeingProcessed.contains("IPv4 Address. . . . . . . . . . . : ")) {
+            String ip = lineBeingProcessed.replace("IPv4 Address. . . . . . . . . . . : ", "");
+            ip = ip.replace(" ", "");
+            ip = ip.replace("(Preferred)", "");
+            ip = ip.replace("(Tentative)", "");
+            nic.setIPaddress(ip);
+        }
+    }
+
+    private void extractNicMac() {
+        if (lineBeingProcessed.contains("Physical Address. . . . . . . . . : ")) {
+            String mac = lineBeingProcessed.replace("Physical Address. . . . . . . . . : ", "");
+            mac = mac.replace(" ", "");
+            nic.setMac(mac);
+        }
+    }
+
+    private void extractNicName() {
+        if (lineBeingProcessed.contains("Description . . . . . . . . . . . : ")) {
+            String name = lineBeingProcessed.replace("Description . . . . . . . . . . . : ", "");
+            name = name.substring(3);
+            nic.setName(name);
+        }
     }
 }

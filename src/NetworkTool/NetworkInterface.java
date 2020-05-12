@@ -19,7 +19,8 @@ public class NetworkInterface {
         int index = 0;
         while (true) {
             try {
-                NetworkInterfaceController nic = ReadNetworkInterfaceControllerFromCmd.get(index);
+                ReadNetworkInterfaceControllerFromCmd readNic = new ReadNetworkInterfaceControllerFromCmd();
+                NetworkInterfaceController nic = readNic.get(index);
                 systemNetworkInterfaceControllers.add(index, nic);
                 index++;
             } catch (IndexOutOfBoundsException e) {
@@ -29,7 +30,8 @@ public class NetworkInterface {
     }
 
     public static void updateNic(int index) {
-        NetworkInterfaceController nic = ReadNetworkInterfaceControllerFromCmd.get(index);
+        ReadNetworkInterfaceControllerFromCmd readNic = new ReadNetworkInterfaceControllerFromCmd();
+        NetworkInterfaceController nic = readNic.get(index);
         systemNetworkInterfaceControllers.remove(index);
         systemNetworkInterfaceControllers.add(index, nic);
     }

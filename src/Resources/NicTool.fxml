@@ -47,7 +47,7 @@
                 <GridPane alignment="center" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER_RIGHT">
                     <children>
                         <Label fx:id="nicLabel" ellipsisString="" prefHeight="17.0" prefWidth="25.0" text="NIC:" GridPane.rowIndex="1" />
-                        <ComboBox fx:id="NIC" maxWidth="1.7976931348623157E308" minWidth="220.0" onAction="#updateNicSettings" promptText="Select" visibleRowCount="20" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="1" />
+                        <ComboBox fx:id="nicSelector" maxWidth="1.7976931348623157E308" minWidth="220.0" promptText="Select" visibleRowCount="20" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="1" />
                     </children>
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="0.0" prefWidth="95.0" />

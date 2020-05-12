@@ -20,7 +20,7 @@ public class NicTool {
     ProfileContainer profile = new ProfileContainer();
 
     @FXML
-    private ComboBox<String> NIC;
+    private ComboBox<String> nicSelector;
 
     @FXML
     private TextField macAdress;
@@ -117,19 +117,24 @@ public class NicTool {
                 dhcpHandler();
             });
 
+            nicSelector.getSelectionModel().selectedIndexProperty().addListener( (obs, oldVal, newVal) -> {
+                updateNicSettings();
+            });
+
+
         } catch (Exception e) {
         }
     }
 
     private void setNicData() {
-        NIC.getItems().clear();
+        nicSelector.getItems().clear();
         for (NetworkInterface.NIC nic : NetworkInterface.getNic()) {
-            NIC.getItems().add(nic.getName());
+            nicSelector.getItems().add(nic.getName());
         }
     }
 
     public void updateNicSettings () {
-        int index = NIC.getSelectionModel().getSelectedIndex();
+        int index = nicSelector.getSelectionModel().getSelectedIndex();
 
         NetworkInterface.clone(tempNic, NetworkInterface.NIC.get(index));
 
@@ -144,7 +149,7 @@ public class NicTool {
     }
 
     public void setIpFieldsEditable (boolean editable) {
-        if (NIC.getSelectionModel().getSelectedIndex() >= 0){
+        if (nicSelector.getSelectionModel().getSelectedIndex() >= 0){
             ip.setEditable(editable);
             subnetMask.setEditable(editable);
             defaultGateway.setEditable(editable);
@@ -154,7 +159,7 @@ public class NicTool {
             defaultGateway.setDisable(!editable);
 
             if (!editable) {
-                int index = NIC.getSelectionModel().getSelectedIndex();
+                int index = nicSelector.getSelectionModel().getSelectedIndex();
                 ip.setText(NetworkInterface.NIC.get( index ).getIPaddress());
                 subnetMask.setText(NetworkInterface.NIC.get( index ).getSubnetMask());
                 defaultGateway.setText(NetworkInterface.NIC.get( index ).getDefaultGateway());
@@ -250,7 +255,7 @@ public class NicTool {
         @Override
         public void handle(ActionEvent event) {
             if (tempNic.getName() != null) {
-                NetworkInterface.clone(tempNic, NetworkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
+                NetworkInterface.clone(tempNic, NetworkInterface.NIC.get(nicSelector.getSelectionModel().getSelectedIndex()));
                 setUiTo(tempNic);
                 defaultButton.setDisable(true);
                 applyButton.setDisable(true);
@@ -264,9 +269,9 @@ public class NicTool {
             if (lastSetup.getName() != null) {
                 revertButton.setDisable(true);
                 NetworkInterface.clone(tempNic, lastSetup);
-                NetworkInterface.pushNIC(tempNic, NIC.getSelectionModel().getSelectedIndex());
-                NetworkInterface.updateNIC(NIC.getSelectionModel().getSelectedIndex());
-                setUiTo(NetworkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
+                NetworkInterface.pushNIC(tempNic, nicSelector.getSelectionModel().getSelectedIndex());
+                NetworkInterface.updateNIC(nicSelector.getSelectionModel().getSelectedIndex());
+                setUiTo(NetworkInterface.NIC.get(nicSelector.getSelectionModel().getSelectedIndex()));
                 defaultButton.setDisable(true);
                 applyButton.setDisable(true);
             }
@@ -276,11 +281,11 @@ public class NicTool {
     EventHandler<ActionEvent> applyButtonHandler = new EventHandler<ActionEvent>() {
         @Override
         public void handle(ActionEvent event) {
-            NetworkInterface.clone(lastSetup, NetworkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
+            NetworkInterface.clone(lastSetup, NetworkInterface.NIC.get(nicSelector.getSelectionModel().getSelectedIndex()));
             revertButton.setDisable(false);
-            NetworkInterface.pushNIC(tempNic, NIC.getSelectionModel().getSelectedIndex());
-            NetworkInterface.updateNIC(NIC.getSelectionModel().getSelectedIndex());
-            setUiTo(NetworkInterface.NIC.get(NIC.getSelectionModel().getSelectedIndex()));
+            NetworkInterface.pushNIC(tempNic, nicSelector.getSelectionModel().getSelectedIndex());
+            NetworkInterface.updateNIC(nicSelector.getSelectionModel().getSelectedIndex());
+            setUiTo(NetworkInterface.NIC.get(nicSelector.getSelectionModel().getSelectedIndex()));
             defaultButton.setDisable(true);
             applyButton.setDisable(true);
         }

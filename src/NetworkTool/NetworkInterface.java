@@ -120,13 +120,12 @@ public class NetworkInterface {
     }
 
     public static void updateNic(int index) {
-        System.out.println("Index: " + index);
         Nic nic = readNic(index);
         NIC.remove(index);
         NIC.add(index, nic);
     }
 
-    public static Nic readNic(int index) {
+    private static Nic readNic(int index) {
         ProcessBuilder pb = new ProcessBuilder();
 
         pb.command("cmd.exe", "/c", "ipconfig /all");
@@ -209,28 +208,6 @@ public class NetworkInterface {
             e.printStackTrace();
         }
         return null;
-    }
-
-
-    public static void printNIC(Nic nic) {
-        System.out.println("Display name: " + nic.getDisplayName());
-        System.out.println("Name: " + nic.getName());
-        System.out.println("DHCP: " + nic.isDhcp());
-        System.out.println("MAC address: " + nic.getMAC());
-        System.out.println("IP address: " + nic.getIPaddress());
-        System.out.println("Subnet mask: " + nic.getSubnetMask());
-        System.out.println("Default gateway: " + nic.getDefaultGateway());
-        System.out.println();
-    }
-
-    public static void printNIC(int index) {
-        printNIC(NIC.get(index));
-    }
-
-    public static void printNIC() {
-        for (int index = 0; index < NIC.size(); index++) {
-            printNIC(index);
-        }
     }
 
     public static void pushNIC (Nic nic, int index) throws IllegalStateException {

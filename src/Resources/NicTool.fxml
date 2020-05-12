@@ -122,9 +122,8 @@
                         <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <Button fx:id="applyButton" disable="true" mnemonicParsing="false" prefWidth="60.0" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Button fx:id="applyButton" disable="true" mnemonicParsing="false" prefWidth="60.0" text="Apply" GridPane.columnIndex="5" GridPane.rowIndex="1" />
                         <Button fx:id="revertButton" disable="true" mnemonicParsing="false" prefWidth="60.0" text="Revert" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                        <Button fx:id="defaultButton" disable="true" mnemonicParsing="false" prefWidth="60.0" text="Default" GridPane.columnIndex="5" GridPane.rowIndex="1" />
                     </children>
                 </GridPane>
             </bottom>

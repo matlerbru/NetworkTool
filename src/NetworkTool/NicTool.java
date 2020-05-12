@@ -15,8 +15,8 @@ import java.util.Optional;
 
 public class NicTool {
 
-    NetworkInterface.NIC tempNic = new NetworkInterface.NIC();
-    NetworkInterface.NIC lastSetup = new NetworkInterface.NIC();
+    NetworkInterface.Nic tempNic = new NetworkInterface.Nic();
+    NetworkInterface.Nic lastSetup = new NetworkInterface.Nic();
     ProfileContainer profile = new ProfileContainer();
 
     @FXML
@@ -42,9 +42,6 @@ public class NicTool {
 
     @FXML
     private Button revertButton;
-
-    @FXML
-    private Button defaultButton;
 
     @FXML
     private Button applyButton;
@@ -81,7 +78,6 @@ public class NicTool {
             NicSettings.setHgrow(resultPane, Priority.ALWAYS);
             NicSettings.setHgrow(setupPane, Priority.ALWAYS);
 
-            defaultButton.setOnAction(defaultButtonHandler);
             revertButton.setOnAction(revertButtonHandler);
             applyButton.setOnAction(applyButtonHandler);
 
@@ -128,12 +124,12 @@ public class NicTool {
 
     private void setNicData() {
         nicSelector.getItems().clear();
-        for (NetworkInterface.NIC nic : NetworkInterface.getNic()) {
+        for (NetworkInterface.Nic nic : NetworkInterface.getNic()) {
             nicSelector.getItems().add(nic.getName());
         }
     }
 
-    public void updateNicSettings () {
+    private void updateNicSettings () {
         int index = nicSelector.getSelectionModel().getSelectedIndex();
 
         NetworkInterface.clone(tempNic, NetworkInterface.NIC.get(index));
@@ -148,7 +144,7 @@ public class NicTool {
         setIpFieldsEditable(!NetworkInterface.NIC.get(index).isDhcp());
     }
 
-    public void setIpFieldsEditable (boolean editable) {
+    private void setIpFieldsEditable (boolean editable) {
         if (nicSelector.getSelectionModel().getSelectedIndex() >= 0){
             ip.setEditable(editable);
             subnetMask.setEditable(editable);
@@ -177,14 +173,13 @@ public class NicTool {
         }
     }
 
-    public void dhcpHandler() {
+    private void dhcpHandler() {
         setIpFieldsEditable(!dhcp.isSelected());
         tempNic.setDhcp(dhcp.isSelected());
-        defaultButton.setDisable(false);
         applyButton.setDisable(false);
     }
 
-    public void ipHandler() {
+    private void ipHandler() {
         if (isFormattedAsIp(ip.getText()))  {
             tempNic.setIPaddress(ip.getText());
         } else if (ip.getText().length() < 7) {
@@ -192,11 +187,10 @@ public class NicTool {
         }else {
             this.ip.setText(tempNic.getIPaddress());
         }
-        defaultButton.setDisable(false);
         applyButton.setDisable(false);
     }
 
-    public void subnetMaskHandler() {
+    private void subnetMaskHandler() {
         if (isFormattedAsIp(subnetMask.getText()))  {
             tempNic.setSubnetMask(subnetMask.getText());
         } else if (subnetMask.getText().length() < 7) {
@@ -204,11 +198,10 @@ public class NicTool {
         }else {
             subnetMask.setText(tempNic.getSubnetMask());
         }
-        defaultButton.setDisable(false);
         applyButton.setDisable(false);
     }
 
-    public void DefaultGatewayEvent() {
+    private void DefaultGatewayEvent() {
         if (isFormattedAsIp(defaultGateway.getText())) {
             tempNic.setDefaultGateway(defaultGateway.getText());
         } else if (defaultGateway.getText().length() < 7) {
@@ -216,17 +209,15 @@ public class NicTool {
         } else {
             defaultGateway.setText(tempNic.getDefaultGateway());
         }
-        defaultButton.setDisable(false);
         applyButton.setDisable(false);
     }
 
-    public void nameHandler() {
+    private void nameHandler() {
         tempNic.setDisplayName(name.getText());
-        defaultButton.setDisable(false);
         applyButton.setDisable(false);
     }
 
-    public boolean isFormattedAsIp(String field) {
+    private boolean isFormattedAsIp(String field) {
         try {
             for (int i = 0; i < 3; i++) {
                 if (field.contains(".")) {
@@ -251,18 +242,6 @@ public class NicTool {
         }
     }
 
-    EventHandler<ActionEvent> defaultButtonHandler = new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent event) {
-            if (tempNic.getName() != null) {
-                NetworkInterface.clone(tempNic, NetworkInterface.NIC.get(nicSelector.getSelectionModel().getSelectedIndex()));
-                setUiTo(tempNic);
-                defaultButton.setDisable(true);
-                applyButton.setDisable(true);
-            }
-        }
-    };
-
     EventHandler<ActionEvent> revertButtonHandler = new EventHandler<ActionEvent>() {
         @Override
         public void handle(ActionEvent event) {
@@ -272,7 +251,6 @@ public class NicTool {
                 NetworkInterface.pushNIC(tempNic, nicSelector.getSelectionModel().getSelectedIndex());
                 NetworkInterface.updateNIC(nicSelector.getSelectionModel().getSelectedIndex());
                 setUiTo(NetworkInterface.NIC.get(nicSelector.getSelectionModel().getSelectedIndex()));
-                defaultButton.setDisable(true);
                 applyButton.setDisable(true);
             }
         }
@@ -286,12 +264,11 @@ public class NicTool {
             NetworkInterface.pushNIC(tempNic, nicSelector.getSelectionModel().getSelectedIndex());
             NetworkInterface.updateNIC(nicSelector.getSelectionModel().getSelectedIndex());
             setUiTo(NetworkInterface.NIC.get(nicSelector.getSelectionModel().getSelectedIndex()));
-            defaultButton.setDisable(true);
             applyButton.setDisable(true);
         }
     };
 
-    public void setUiTo (NetworkInterface.NIC nic, boolean updateName, boolean updateMac) {
+    private void setUiTo (NetworkInterface.Nic nic, boolean updateName, boolean updateMac) {
         NetworkInterface.clone(tempNic, nic);
         dhcp.setSelected(nic.isDhcp());
         setIpFieldsEditable(!nic.isDhcp());
@@ -303,11 +280,11 @@ public class NicTool {
         }
     }
 
-    public void setUiTo (NetworkInterface.NIC nic, boolean updateName) {
+    private void setUiTo (NetworkInterface.Nic nic, boolean updateName) {
         setUiTo(nic, updateName, true);
     }
 
-    public void setUiTo (NetworkInterface.NIC nic) {
+    private void setUiTo (NetworkInterface.Nic nic) {
         setUiTo(nic, true);
     }
 
@@ -350,7 +327,7 @@ public class NicTool {
             int index = profileSelect.getSelectionModel().getSelectedIndex();
             if (index >= 0) {
                 System.out.println(index);
-                NetworkInterface.NIC tempProfile = profile.getProfile(index);
+                NetworkInterface.Nic tempProfile = profile.getProfile(index);
                 setUiTo(profile.getProfile(index), false, false);
             }
         }

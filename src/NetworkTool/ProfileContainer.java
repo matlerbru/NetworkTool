@@ -13,27 +13,25 @@ public class ProfileContainer {
 
     }
 
-    private ArrayList<NetworkInterface.Nic> nic = new ArrayList<NetworkInterface.Nic>();
+    private ArrayList<NetworkInterfaceController> nic = new ArrayList<NetworkInterfaceController>();
     private ArrayList<String> name = new ArrayList<String>();
 
-    public void addProfile(NetworkInterface.Nic nic, String name) {
+    public void addProfile(NetworkInterfaceController nic, String name) {
         if (this.name.contains(name)) {
             throw new IllegalArgumentException("Duplicate profile name");
         } else {
-            NetworkInterface.Nic temp = new NetworkInterface.Nic();
-            NetworkInterface.clone(temp, nic);
+            NetworkInterfaceController temp = new NetworkInterfaceController();
+            NetworkInterfaceController.clone(temp, nic);
             this.nic.add(temp);
             this.name.add(name);
         }
     }
 
-    public NetworkInterface.Nic getProfile(int index) {
-        System.out.println(name.get(index));
-        NetworkInterface.printNIC(nic.get(index));
+    public NetworkInterfaceController getProfile(int index) {
         return nic.get(index);
     }
 
-    public NetworkInterface.Nic getProfile(String name) {
+    public NetworkInterfaceController getProfile(String name) {
         int index = name.indexOf(name);
         return getProfile(index);
     }
@@ -48,7 +46,7 @@ public class ProfileContainer {
         removeProfile(index);
     }
 
-    public static void saveProfileToFile(String fileName, NetworkInterface.Nic nic, String name) {
+    public static void saveProfileToFile(String fileName, NetworkInterfaceController nic, String name) {
         try {
             File file = new File(fileName);
 
@@ -103,15 +101,15 @@ public class ProfileContainer {
         public Profiles() {
         }
 
-        private ArrayList<NetworkInterface.Nic> nic = new ArrayList<NetworkInterface.Nic>();
+        private ArrayList<NetworkInterfaceController> nic = new ArrayList<NetworkInterfaceController>();
         private ArrayList<String> profileName = new ArrayList<String>();
 
-        public void addNic(NetworkInterface.Nic nic, String profileName) {
+        public void addNic(NetworkInterfaceController nic, String profileName) {
             this.nic.add(nic);
             this.profileName.add(profileName);
         }
 
-        public NetworkInterface.Nic getNic (int index) {
+        public NetworkInterfaceController getNic (int index) {
             return nic.get(index);
         }
 
@@ -135,7 +133,7 @@ public class ProfileContainer {
         Scanner fileReader = new Scanner(file);
 
         Profiles profiles = new Profiles();
-        NetworkInterface.Nic tempNic = new NetworkInterface.Nic();
+        NetworkInterfaceController tempNic = new NetworkInterfaceController();
         String tempProfileName = new String("");
         boolean readingProfile = false;
 

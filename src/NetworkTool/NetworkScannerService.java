@@ -23,8 +23,8 @@ public class NetworkScannerService {
 
     public Thread scan(int nicIndex) {
         return new Thread(() -> {
-            NetworkInterface.Nic nic = new NetworkInterface.Nic();
-            NetworkInterface.clone(nic, NetworkInterface.NIC.get(nicIndex));
+            NetworkInterfaceController nic = new NetworkInterfaceController();
+            NetworkInterfaceController.clone(nic, NetworkInterface.getSystemNetworkInterfaceControllers().get(nicIndex));
             try {
                 progress = 0;
                 scanNetwork(nic);
@@ -34,7 +34,7 @@ public class NetworkScannerService {
         });
     }
 
-    private void scanNetwork(NetworkInterface.Nic nic) {
+    private void scanNetwork(NetworkInterfaceController nic) {
         try {
 
             LinkedList<Thread> threads = new LinkedList<>();
@@ -60,7 +60,7 @@ public class NetworkScannerService {
         }
     }
 
-    private Thread startThreadAndPingDevice(NetworkInterface.Nic nic, int i) {
+    private Thread startThreadAndPingDevice(NetworkInterfaceController nic, int i) {
         return new Thread(() -> {
             try {
             String address = formatIpAddress(nic);
@@ -78,7 +78,7 @@ public class NetworkScannerService {
         });
     }
 
-    private void pingDeviceAndGetInformation(String address, NetworkInterface.Nic nic) throws IllegalStateException {
+    private void pingDeviceAndGetInformation(String address, NetworkInterfaceController nic) throws IllegalStateException {
         String hostName = getHostNameFromIp(address, Main.controller.getNetworkScanner().getTimeout());
         if ( hostName != null ) {
             String macAddr = getMacFromArpTable(address, nic);
@@ -107,7 +107,7 @@ public class NetworkScannerService {
         });
     }
 
-    private String formatIpAddress(NetworkInterface.Nic nic) {
+    private String formatIpAddress(NetworkInterfaceController nic) {
         try {
             return nic.getIPaddress().substring(0, Utility.ordinalIndexOf(nic.getIPaddress(), ".", 3) + 1);
         } catch (Exception e) {
@@ -155,7 +155,7 @@ public class NetworkScannerService {
         return null;
     }
 
-    private String getMacFromArpTable (String ipAddr, NetworkInterface.Nic nic) {
+    private String getMacFromArpTable (String ipAddr, NetworkInterfaceController nic) {
         ProcessBuilder pb = new ProcessBuilder();
         pb.command("cmd.exe", "/c", "arp -a");
         try {
@@ -180,9 +180,9 @@ public class NetworkScannerService {
                     }
                 }
             }
-            for (int i = 0; i <= NetworkInterface.NIC.size(); i++) {
-                if (ipAddr.equals(NetworkInterface.NIC.get(i).getIPaddress())) {
-                    return NetworkInterface.NIC.get(i).getMAC().toUpperCase();
+            for (int i = 0; i <= NetworkInterface.getSystemNetworkInterfaceControllers().size(); i++) {
+                if (ipAddr.equals(NetworkInterface.getSystemNetworkInterfaceControllers().get(i).getIPaddress())) {
+                    return NetworkInterface.getSystemNetworkInterfaceControllers().get(i).getMAC().toUpperCase();
                 }
             }
             return "";

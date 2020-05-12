@@ -15,8 +15,8 @@ import java.util.Optional;
 
 public class NicTool {
 
-    NetworkInterface.Nic tempNic = new NetworkInterface.Nic();
-    NetworkInterface.Nic lastSetup = new NetworkInterface.Nic();
+    NetworkInterfaceController tempNic = new NetworkInterfaceController();
+    NetworkInterfaceController lastSetup = new NetworkInterfaceController();
     ProfileContainer profile = new ProfileContainer();
 
     @FXML
@@ -120,7 +120,7 @@ public class NicTool {
 
     private void setNicData() {
         nicSelector.getItems().clear();
-        for (NetworkInterface.Nic nic : NetworkInterface.getNic()) {
+        for (NetworkInterfaceController nic : NetworkInterface.getSystemNetworkInterfaceControllers()) {
             nicSelector.getItems().add(nic.getName());
         }
     }
@@ -128,16 +128,16 @@ public class NicTool {
     private void updateNicSettings () {
         int index = nicSelector.getSelectionModel().getSelectedIndex();
 
-        NetworkInterface.clone(tempNic, NetworkInterface.NIC.get(index));
+        NetworkInterfaceController.clone(tempNic, NetworkInterface.getSystemNetworkInterfaceControllers().get(index));
 
-        macAdress.setText(NetworkInterface.NIC.get( index ).getMAC());
-        dhcp.setSelected(NetworkInterface.NIC.get( index ).isDhcp());
+        macAdress.setText(NetworkInterface.getSystemNetworkInterfaceControllers().get( index ).getMAC());
+        dhcp.setSelected(NetworkInterface.getSystemNetworkInterfaceControllers().get( index ).isDhcp());
         setIpFieldsEditable(!dhcp.isSelected());
-        name.setText(NetworkInterface.NIC.get( index ).getDisplayName());
+        name.setText(NetworkInterface.getSystemNetworkInterfaceControllers().get( index ).getDisplayName());
 
         dhcp.setDisable(false);
         name.setDisable(false);
-        setIpFieldsEditable(!NetworkInterface.NIC.get(index).isDhcp());
+        setIpFieldsEditable(!NetworkInterface.getSystemNetworkInterfaceControllers().get(index).isDhcp());
     }
 
     private void setIpFieldsEditable (boolean editable) {
@@ -152,9 +152,9 @@ public class NicTool {
 
             if (!editable) {
                 int index = nicSelector.getSelectionModel().getSelectedIndex();
-                ip.setText(NetworkInterface.NIC.get( index ).getIPaddress());
-                subnetMask.setText(NetworkInterface.NIC.get( index ).getSubnetMask());
-                defaultGateway.setText(NetworkInterface.NIC.get( index ).getDefaultGateway());
+                ip.setText(NetworkInterface.getSystemNetworkInterfaceControllers().get( index ).getIPaddress());
+                subnetMask.setText(NetworkInterface.getSystemNetworkInterfaceControllers().get( index ).getSubnetMask());
+                defaultGateway.setText(NetworkInterface.getSystemNetworkInterfaceControllers().get( index ).getDefaultGateway());
             } else {
                 if (!isFormattedAsIp(tempNic.getIPaddress())) {
                     ip.setText("0.0.0.0");
@@ -241,11 +241,11 @@ public class NicTool {
     EventHandler<ActionEvent> applyButtonHandler = new EventHandler<ActionEvent>() {
         @Override
         public void handle(ActionEvent event) {
-            NetworkInterface.clone(lastSetup, NetworkInterface.NIC.get(nicSelector.getSelectionModel().getSelectedIndex()));
+            NetworkInterfaceController.clone(lastSetup, NetworkInterface.getSystemNetworkInterfaceControllers().get(nicSelector.getSelectionModel().getSelectedIndex()));
             try {
                 NetworkInterface.pushNIC(tempNic, nicSelector.getSelectionModel().getSelectedIndex());
                 NetworkInterface.updateNic(nicSelector.getSelectionModel().getSelectedIndex());
-                setUiTo(NetworkInterface.NIC.get(nicSelector.getSelectionModel().getSelectedIndex()));
+                setUiTo(NetworkInterface.getSystemNetworkInterfaceControllers().get(nicSelector.getSelectionModel().getSelectedIndex()));
                 applyButton.setDisable(true);
             } catch (IllegalStateException e) {
                 e.printStackTrace();
@@ -253,8 +253,8 @@ public class NicTool {
         }
     };
 
-    private void setUiTo (NetworkInterface.Nic nic, boolean updateName, boolean updateMac) {
-        NetworkInterface.clone(tempNic, nic);
+    private void setUiTo (NetworkInterfaceController nic, boolean updateName, boolean updateMac) {
+        NetworkInterfaceController.clone(tempNic, nic);
         dhcp.setSelected(nic.isDhcp());
         setIpFieldsEditable(!nic.isDhcp());
         if (updateName) {
@@ -265,11 +265,11 @@ public class NicTool {
         }
     }
 
-    private void setUiTo (NetworkInterface.Nic nic, boolean updateName) {
+    private void setUiTo (NetworkInterfaceController nic, boolean updateName) {
         setUiTo(nic, updateName, true);
     }
 
-    private void setUiTo (NetworkInterface.Nic nic) {
+    private void setUiTo (NetworkInterfaceController nic) {
         setUiTo(nic, true);
     }
 
@@ -312,7 +312,7 @@ public class NicTool {
             int index = profileSelect.getSelectionModel().getSelectedIndex();
             if (index >= 0) {
                 System.out.println(index);
-                NetworkInterface.Nic tempProfile = profile.getProfile(index);
+                NetworkInterfaceController tempProfile = profile.getProfile(index);
                 setUiTo(profile.getProfile(index), false, false);
             }
         }

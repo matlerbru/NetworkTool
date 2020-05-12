@@ -154,7 +154,7 @@ public class NetworkScanner implements Initializable {
     private void setNicData() {
         nicSelector.getItems().clear();
         nicSelector.getItems().add("All");
-        for (NetworkInterface.Nic nic : NetworkInterface.getNic()) {
+        for (NetworkInterfaceController nic : NetworkInterface.getSystemNetworkInterfaceControllers()) {
             nicSelector.getItems().add(nic.getName());
         }
     }
@@ -171,7 +171,7 @@ public class NetworkScanner implements Initializable {
         LinkedList<NetworkScannerService> scanners = new LinkedList<>();
         LinkedList<Thread> scans = new LinkedList<>();
 
-        for (int i = 0; i < NetworkInterface.NIC.size(); i++) {
+        for (int i = 0; i < NetworkInterface.getSystemNetworkInterfaceControllers().size(); i++) {
             NetworkScannerService scanner = new NetworkScannerService();
             Thread scan = scanner.scan(i);
 
@@ -189,7 +189,7 @@ public class NetworkScanner implements Initializable {
                     break;
                 }
                 double progress = 0;
-                for (int i = 0; i <= NetworkInterface.NIC.size() - 1; i++) {
+                for (int i = 0; i <= NetworkInterface.getSystemNetworkInterfaceControllers().size() - 1; i++) {
                     if (scanners.get(i).getProgress() != -1.0) {
                         progress = progress + scanners.get(i).getProgress();
                     }

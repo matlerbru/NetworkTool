@@ -8,110 +8,19 @@ import java.util.ArrayList;
 
 public class NetworkInterface {
 
-    public static ArrayList<Nic> NIC = new ArrayList<Nic>();
+    private static ArrayList<NetworkInterfaceController> systemNetworkInterfaceControllers = new ArrayList<NetworkInterfaceController>();
 
-    public static class Nic {
-        public Nic() {
-
-        }
-
-        public Nic(String name, String displayName, String MAC, String IPaddress, boolean dhcp, String subnetMask, String defaultGateway) {
-            this.name = name;
-            this.displayName = displayName;
-            this.MAC = MAC;
-            this.IPaddress = IPaddress;
-            this.dhcp = dhcp;
-            this.subnetMask = subnetMask;
-            this.defaultGateway = defaultGateway;
-        }
-
-        private String name;
-        private String displayName;
-
-        private String MAC;
-
-        private String IPaddress;
-
-        private boolean dhcp;
-
-        private String subnetMask;
-        private String defaultGateway;
-
-        public String getName() {
-            return name;
-        }
-
-        public String getDisplayName() {
-            return displayName;
-        }
-
-        public void setDisplayName(String displayName) {
-            this.displayName = displayName;
-        }
-
-        public String getMAC() {
-            return MAC;
-        }
-
-        public String getIPaddress() {
-            return IPaddress;
-        }
-
-        public void setIPaddress(String IPaddress) {
-            this.IPaddress = IPaddress;
-        }
-
-        public boolean isDhcp() {
-            return dhcp;
-        }
-
-        public void setDhcp(boolean dhcp) {
-            this.dhcp = dhcp;
-        }
-
-        public String getSubnetMask() {
-            return subnetMask;
-        }
-
-        public void setSubnetMask(String subnetMask) {
-            this.subnetMask = subnetMask;
-        }
-
-        public String getDefaultGateway() {
-            return defaultGateway;
-        }
-
-        public void setDefaultGateway(String defaultGateway) {
-            this.defaultGateway = defaultGateway;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public void printNIC(Nic nic) {
-            System.out.println("Display name: " + this.displayName);
-            System.out.println("Name: " + this.name);
-            System.out.println("DHCP: " + this.dhcp);
-            System.out.println("MAC address: " + this.MAC);
-            System.out.println("IP address: " + this.IPaddress);
-            System.out.println("Subnet mask: " + this.subnetMask);
-            System.out.println("Default gateway: " + this.defaultGateway);
-            System.out.println();
-        }
-    }
-
-    public static ArrayList<Nic> getNic () {
-        return NIC;
+    public static ArrayList<NetworkInterfaceController> getSystemNetworkInterfaceControllers () {
+        return systemNetworkInterfaceControllers;
     }
 
     public static void updateAllNic() {
-        NIC.clear();
+        systemNetworkInterfaceControllers.clear();
         int index = 0;
         while (true) {
             try {
-                Nic nic = readNic(index);
-                NIC.add(index, nic);
+                NetworkInterfaceController nic = readNic(index);
+                systemNetworkInterfaceControllers.add(index, nic);
                 index++;
             } catch (IndexOutOfBoundsException e) {
                 break;
@@ -120,17 +29,17 @@ public class NetworkInterface {
     }
 
     public static void updateNic(int index) {
-        Nic nic = readNic(index);
-        NIC.remove(index);
-        NIC.add(index, nic);
+        NetworkInterfaceController nic = readNic(index);
+        systemNetworkInterfaceControllers.remove(index);
+        systemNetworkInterfaceControllers.add(index, nic);
     }
 
-    private static Nic readNic(int index) {
+    private static NetworkInterfaceController readNic(int index) {
         ProcessBuilder pb = new ProcessBuilder();
 
         pb.command("cmd.exe", "/c", "ipconfig /all");
         int readIndex = 0;
-        Nic nic = new Nic();
+        NetworkInterfaceController nic = new NetworkInterfaceController();
 
         try {
             Process process = pb.start();
@@ -145,8 +54,9 @@ public class NetworkInterface {
                     try {
                         if (lastLine.contains(":") && !lastLine.contains(". .")) {
                             newNIC = true;
-                            nic.displayName = lastLine.replace(":", "");
-                            nic.displayName = nic.displayName.substring( nic.displayName.indexOf("adapter") + 8);
+                            String displayName = lastLine.replace(":", "");
+                            displayName = displayName.substring(displayName.indexOf("adapter") + 8);
+                            nic.setDisplayName(displayName);
                         } else {
                             newNIC = false;
                         }
@@ -158,44 +68,49 @@ public class NetworkInterface {
                 if (newNIC) {
 
                     if (line.contains("Description . . . . . . . . . . . : ")) {
-                        nic.name = line.replace("Description . . . . . . . . . . . : ", "");
-                        nic.name = nic.name.substring(3, nic.name.length());
+                        String name = line.replace("Description . . . . . . . . . . . : ", "");
+                        name = name.substring(3);
+                        nic.setName(name);
                     }
 
                     if (line.contains("Physical Address. . . . . . . . . : ")) {
-                        nic.MAC = line.replace("Physical Address. . . . . . . . . : ", "");
-                        nic.MAC = nic.MAC.replace(" ", "");
+                        String mac = line.replace("Physical Address. . . . . . . . . : ", "");
+                        mac = mac.replace(" ", "");
+                        nic.setMac(mac);
                     }
 
                     if (line.contains("IPv4 Address. . . . . . . . . . . : ")) {
-                        nic.IPaddress = line.replace("IPv4 Address. . . . . . . . . . . : ", "");
-                        nic.IPaddress = nic.IPaddress.replace(" ", "");
-                        nic.IPaddress = nic.IPaddress.replace("(Preferred)", "");
-                        nic.IPaddress = nic.IPaddress.replace("(Tentative)", "");
+                        String ip = line.replace("IPv4 Address. . . . . . . . . . . : ", "");
+                        ip = ip.replace(" ", "");
+                        ip = ip.replace("(Preferred)", "");
+                        ip = ip.replace("(Tentative)", "");
+                        nic.setIPaddress(ip);
                     }
 
                     if (line.contains("Subnet Mask . . . . . . . . . . . : ")) {
-                        nic.subnetMask = line.replace("Subnet Mask . . . . . . . . . . . : ", "");
-                        nic.subnetMask = nic.subnetMask.replace(" ", "");
+                        String subnetMask = line.replace("Subnet Mask . . . . . . . . . . . : ", "");
+                        subnetMask = subnetMask.replace(" ", "");
+                        nic.setSubnetMask(subnetMask);
                     }
 
                     if (line.contains("Default Gateway . . . . . . . . . : ")) {
-                        nic.defaultGateway = line.replace("Default Gateway . . . . . . . . . : ", "");
-                        nic.defaultGateway = nic.defaultGateway.replace(" ", "");
+                        String defaultGateway = line.replace("Default Gateway . . . . . . . . . : ", "");
+                        defaultGateway = defaultGateway.replace(" ", "");
+                        nic.setDefaultGateway(defaultGateway);
                     }
 
                     if (line.contains("DHCP Enabled. . . . . . . . . . . : ")) {
-                        nic.dhcp = (line.contains("Yes"));
+                        nic.setDhcp(line.contains("Yes"));
                     }
 
                 } else {
                     try {
-                        if (nic.displayName.length() > 0) {
+                        if (nic.getDisplayName().length() > 0) {
                             if (readIndex == index) {
                                 return nic;
                             }
                             readIndex++;
-                            nic = new Nic(null, null, null, null, false, null, null);
+                            nic = new NetworkInterfaceController(null, null, null, null, false, null, null);
                         }
                     } catch (Exception e) {
 
@@ -210,8 +125,8 @@ public class NetworkInterface {
         return null;
     }
 
-    public static void pushNIC (Nic nic, int index) throws IllegalStateException {
-        String name = NIC.get(index).getDisplayName();
+    public static void pushNIC (NetworkInterfaceController nic, int index) throws IllegalStateException {
+        String name = systemNetworkInterfaceControllers.get(index).getDisplayName();
 
         String IpCommand = "netsh interface ipv4 set address name=\"" + name + "\"";
         String NameCommand = "netsh interface set interface name=\"" + name + "\" newname=\"" + nic.getDisplayName() + "\"";
@@ -240,7 +155,6 @@ public class NetworkInterface {
             while ((line = readerIp.readLine()) != null) {
                 System.out.println(line);
                 if (line.length() > 0 && !line.contains("DHCP is already enabled on this interface.")) {
-                    System.out.println("Throw");
                     throw new IllegalStateException(line);
                 }
             }
@@ -248,43 +162,4 @@ public class NetworkInterface {
             e.printStackTrace();
         }
     }
-
-    public static void clone(Nic destination, Nic source) {
-        destination.name = source.name;
-        destination.displayName = source.displayName;
-        destination.dhcp = source.dhcp;
-        destination.MAC = source.MAC;
-        destination.IPaddress = source.IPaddress;
-        destination.subnetMask = source.subnetMask;
-        destination.defaultGateway = source.defaultGateway;
-    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

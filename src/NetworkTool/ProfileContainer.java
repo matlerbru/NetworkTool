@@ -10,7 +10,6 @@ import java.util.Scanner;
 
 public class ProfileContainer {
     public ProfileContainer() {
-
     }
 
     private ArrayList<NetworkInterfaceController> nic = new ArrayList<NetworkInterfaceController>();

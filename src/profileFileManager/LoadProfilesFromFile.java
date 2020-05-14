@@ -1,35 +1,34 @@
 package profileFileManager;
 
 import NetworkTool.NetworkInterfaceController;
-import NetworkTool.ProfileContainer;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class loadProfilesFromFile {
+public class LoadProfilesFromFile {
 
-    public static ProfileContainer.Profiles load(String fileName) throws IOException {
+    public static void load(String fileName) throws IOException {
 
         File file = new File(fileName);
 
         if (!file.exists()) {
-            createXmlFile.createFile(fileName);
+            new CreateXmlFile(fileName);
         }
 
         Scanner fileReader = new Scanner(file);
 
-        ProfileContainer.Profiles profiles = new ProfileContainer.Profiles();
         NetworkInterfaceController tempNic = new NetworkInterfaceController();
         String tempProfileName = new String("");
         boolean readingProfile = false;
 
         while (fileReader.hasNextLine()){
             String line = fileReader.nextLine();
-            if (line.contains("<profile>")) readingProfile = true;
-            if (line.contains("</profile>")) {
+            if (line.contains("<profile>")) {
+                readingProfile = true;
+            } else if (line.contains("</profile>")) {
                 readingProfile = false;
-                profiles.addNic(tempNic, tempProfileName);
+                ProfileContainer.container.addProfile(tempNic, tempProfileName);
             }
             if (readingProfile) {
                 if (line.contains("<profileName>")) {
@@ -70,7 +69,6 @@ public class loadProfilesFromFile {
             }
         }
         fileReader.close();
-        return profiles;
     }
 
 }

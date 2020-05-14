@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
-public class removeProfileFromFile {
+public class RemoveProfileFromFile {
 
     public static void remove(String fileName, int index) {
         File file = new File(fileName);
@@ -29,7 +29,7 @@ public class removeProfileFromFile {
             if (!(readingIndex == index)) {
                 try {
                     if (!tempFile.exists()) {
-                        createXmlFile.createFile(tempFile.getName(), false);
+                        new CreateXmlFile(tempFile.getName(), false);
                     }
                 } catch (IOException e) {
                 }

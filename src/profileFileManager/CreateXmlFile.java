@@ -2,15 +2,15 @@ package profileFileManager;
 
 import java.io.*;
 
-class createXmlFile<file> {
+class CreateXmlFile<file> {
 
     private File file;
 
-    public createXmlFile(String fileName, boolean includeHeader) throws IOException {
+    public CreateXmlFile(String fileName, boolean includeHeader) throws IOException {
         createXmlFile(fileName, includeHeader);
     }
 
-    public createXmlFile(String fileName) throws IOException {
+    public CreateXmlFile(String fileName) throws IOException {
         createXmlFile(fileName, true);
     }
 

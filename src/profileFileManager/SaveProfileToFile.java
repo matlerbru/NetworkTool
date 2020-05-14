@@ -7,14 +7,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-public class saveProfileToFile {
+public class SaveProfileToFile {
 
     public static void save(String fileName, NetworkInterfaceController nic, String name) {
         try {
             File file = new File(fileName);
 
             if (!file.exists()) {
-                createXmlFile.createFile(fileName);
+                new CreateXmlFile(fileName);
             }
 
             PrintStream fileWriter = new PrintStream(new FileOutputStream(fileName, true));

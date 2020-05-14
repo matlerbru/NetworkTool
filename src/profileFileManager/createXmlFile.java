@@ -2,22 +2,28 @@ package profileFileManager;
 
 import java.io.*;
 
-class createXmlFile {
+class createXmlFile<file> {
 
-    public static void createFile(String fileName, boolean includeHeader) throws IOException {
-        File file = new File(fileName);
+    private File file;
+
+    public createXmlFile(String fileName, boolean includeHeader) throws IOException {
+        createXmlFile(fileName, includeHeader);
+    }
+
+    public createXmlFile(String fileName) throws IOException {
+        createXmlFile(fileName, true);
+    }
+
+    private void createXmlFile(String fileName, boolean includeHeader) throws IOException {
+        file = new File(fileName);
         if  (file.createNewFile()) {
             if (includeHeader) {
-                printXmlHeaderToFile(file);
+                printXmlHeaderToFile();
             }
         } else throw new IOException("File already existing: " + fileName);
     }
 
-    public static void createFile(String fileName) throws IOException {
-        createFile(fileName, true);
-    }
-
-    private static void printXmlHeaderToFile(File file) {
+    private void printXmlHeaderToFile() {
         try {
             PrintStream fileWriter = new PrintStream(new FileOutputStream(file.getName(), true));
             fileWriter.println("<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>");
@@ -27,6 +33,10 @@ class createXmlFile {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public File getFile() {
+        return file;
     }
 
 }

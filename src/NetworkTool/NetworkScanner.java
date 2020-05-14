@@ -247,7 +247,6 @@ public class NetworkScanner implements Initializable {
     };
 
     public void ipRangeHandler(TextField range, int faultValue){
-        System.out.println("called");
         try {
             int value = Integer.parseInt(range.getText());
             if (value < 0 || value > 254) {

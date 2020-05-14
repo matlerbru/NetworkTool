@@ -1,5 +1,6 @@
 package NetworkTool;
 
+import NetworkTool.NetworkScanner;
 import javafx.beans.property.SimpleStringProperty;
 
 public class NetworkLocation {

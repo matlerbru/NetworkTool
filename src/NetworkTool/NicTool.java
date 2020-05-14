@@ -1,7 +1,9 @@
 package NetworkTool;
 
-
-import profileFileManager.*;
+import ProfileFileManager.LoadProfilesFromFile;
+import ProfileFileManager.ProfileContainer;
+import ProfileFileManager.RemoveProfileFromFile;
+import ProfileFileManager.SaveProfileToFile;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -64,6 +66,53 @@ public class NicTool {
 
     @FXML
     private Button removeProfileButton;
+
+    EventHandler<ActionEvent> AddProfileButtonHandler = new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+            TextInputDialog dialog = new TextInputDialog("Enter profile name.");
+            dialog.setTitle("Enter profile name");
+            dialog.setContentText("Name:");
+            Optional<String> result = dialog.showAndWait();
+            try {
+                ProfileContainer.container.addProfile(tempNic, result.get().trim());
+                profileSelect.getItems().add(result.get());
+                SaveProfileToFile.save(".profile.xml", tempNic, result.get());
+
+            } catch (IllegalArgumentException e) {
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setHeaderText("Duplicate name");
+                errorAlert.setContentText("Please try again with another name");
+                errorAlert.showAndWait();
+            } catch (RuntimeException e) {
+            }
+        }
+    };
+
+    EventHandler<ActionEvent> deleteProfileButtonHandler = new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+            int index = profileSelect.getSelectionModel().getSelectedIndex();
+            if (index >= 0) {
+                String profileName = getProfileNameFromComboBox();
+                ProfileContainer.container.removeProfile(profileName);
+                profileSelect.getItems().remove(index);
+                RemoveProfileFromFile.remove(".Profile.xml", index);
+            }
+        }
+    };
+
+    EventHandler<ActionEvent> loadProfileButtonHandler = new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+            String profileName = getProfileNameFromComboBox();
+            System.out.println(profileName);
+            if (profileName != null) {
+                NetworkInterfaceController nic = ProfileContainer.container.getProfile(profileName);
+                setUiTo(nic, false, false);
+            }
+        }
+    };
 
     public void initialize () {
         try {
@@ -273,53 +322,6 @@ public class NicTool {
     private void setUiTo (NetworkInterfaceController nic) {
         setUiTo(nic, true);
     }
-
-    EventHandler<ActionEvent> AddProfileButtonHandler = new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent event) {
-            TextInputDialog dialog = new TextInputDialog("Enter profile name.");
-            dialog.setTitle("Enter profile name");
-            dialog.setContentText("Name:");
-            Optional<String> result = dialog.showAndWait();
-            try {
-                ProfileContainer.container.addProfile(tempNic, result.get().trim());
-                profileSelect.getItems().add(result.get());
-                SaveProfileToFile.save(".profile.xml", tempNic, result.get());
-
-            } catch (IllegalArgumentException e) {
-                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                errorAlert.setHeaderText("Duplicate name");
-                errorAlert.setContentText("Please try again with another name");
-                errorAlert.showAndWait();
-            } catch (RuntimeException e) {
-            }
-        }
-    };
-
-    EventHandler<ActionEvent> deleteProfileButtonHandler = new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent event) {
-            int index = profileSelect.getSelectionModel().getSelectedIndex();
-            if (index >= 0) {
-                String profileName = getProfileNameFromComboBox();
-                ProfileContainer.container.removeProfile(profileName);
-                profileSelect.getItems().remove(index);
-                RemoveProfileFromFile.remove(".Profile.xml", index);
-            }
-        }
-    };
-
-    EventHandler<ActionEvent> loadProfileButtonHandler = new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent event) {
-            String profileName = getProfileNameFromComboBox();
-            System.out.println(profileName);
-            if (profileName != null) {
-                NetworkInterfaceController nic = ProfileContainer.container.getProfile(profileName);
-                setUiTo(nic, false, false);
-            }
-        }
-    };
 
     private void updateProfileFromFile (String fileName) throws IOException {
         for (String key : ProfileContainer.container.getListOfKeys()) {

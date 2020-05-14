@@ -1,4 +1,4 @@
-package profileFileManager;
+package ProfileFileManager;
 
 import NetworkTool.NetworkInterfaceController;
 

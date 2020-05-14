@@ -19,7 +19,6 @@ public class NicTool {
 
     NetworkInterfaceController tempNic = new NetworkInterfaceController();
     NetworkInterfaceController lastSetup = new NetworkInterfaceController();
-    ProfileContainer profile = new ProfileContainer();
 
     @FXML
     private ComboBox<String> nicSelector;
@@ -68,9 +67,9 @@ public class NicTool {
 
     public void initialize () {
         try {
-            loadProfilesFromFile.load(".profile.xml");
+            LoadProfilesFromFile.load(".profile.xml");
+            updateProfileFromFile(".profile.xml");
             setNicData();
-            updateProfileFromFile(".Profile.xml");
             Path path = Paths.get(".Profile.xml");
             Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
 
@@ -283,9 +282,9 @@ public class NicTool {
             dialog.setContentText("Name:");
             Optional<String> result = dialog.showAndWait();
             try {
-                profile.addProfile(tempNic, result.get().trim());
+                ProfileContainer.container.addProfile(tempNic, result.get().trim());
                 profileSelect.getItems().add(result.get());
-                profileFileManager.saveProfileToFile.save(".profile.xml", tempNic, result.get());
+                SaveProfileToFile.save(".profile.xml", tempNic, result.get());
 
             } catch (IllegalArgumentException e) {
                 Alert errorAlert = new Alert(Alert.AlertType.ERROR);
@@ -302,9 +301,10 @@ public class NicTool {
         public void handle(ActionEvent event) {
             int index = profileSelect.getSelectionModel().getSelectedIndex();
             if (index >= 0) {
-                profile.removeProfile(index);
+                String profileName = getProfileNameFromComboBox();
+                ProfileContainer.container.removeProfile(profileName);
                 profileSelect.getItems().remove(index);
-                removeProfileFromFile.remove(".Profile.xml", index);
+                RemoveProfileFromFile.remove(".Profile.xml", index);
             }
         }
     };
@@ -312,21 +312,23 @@ public class NicTool {
     EventHandler<ActionEvent> loadProfileButtonHandler = new EventHandler<ActionEvent>() {
         @Override
         public void handle(ActionEvent event) {
-            int index = profileSelect.getSelectionModel().getSelectedIndex();
-            if (index >= 0) {
-                System.out.println(index);
-                NetworkInterfaceController tempProfile = profile.getProfile(index);
-                setUiTo(profile.getProfile(index), false, false);
+            String profileName = getProfileNameFromComboBox();
+            System.out.println(profileName);
+            if (profileName != null) {
+                NetworkInterfaceController nic = ProfileContainer.container.getProfile(profileName);
+                setUiTo(nic, false, false);
             }
         }
     };
 
     private void updateProfileFromFile (String fileName) throws IOException {
-        ProfileContainer.Profiles profiles = new ProfileContainer.Profiles();
-        profiles = loadProfilesFromFile.load(fileName);
-        for (int i = 0; i < profiles.size(); i++) {
-            profile.addProfile(profiles.getNic(i), profiles.getProfileName(i));
-            profileSelect.getItems().add(profiles.getProfileName(i));
+        for (String key : ProfileContainer.container.getListOfKeys()) {
+            profileSelect.getItems().add(key);
         }
     }
+
+    private String getProfileNameFromComboBox() {
+        return (String)profileSelect.getSelectionModel().getSelectedItem();
+    }
+
 }

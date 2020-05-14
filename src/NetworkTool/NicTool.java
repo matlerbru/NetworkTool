@@ -1,5 +1,7 @@
 package NetworkTool;
 
+
+import profileFileManager.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -66,7 +68,7 @@ public class NicTool {
 
     public void initialize () {
         try {
-            ProfileContainer.loadProfilesFromFile(".profile.xml");
+            loadProfilesFromFile.load(".profile.xml");
             setNicData();
             updateProfileFromFile(".Profile.xml");
             Path path = Paths.get(".Profile.xml");
@@ -283,7 +285,8 @@ public class NicTool {
             try {
                 profile.addProfile(tempNic, result.get().trim());
                 profileSelect.getItems().add(result.get());
-                ProfileContainer.saveProfileToFile(".profile.xml", tempNic, result.get());
+                profileFileManager.saveProfileToFile.save(".profile.xml", tempNic, result.get());
+
             } catch (IllegalArgumentException e) {
                 Alert errorAlert = new Alert(Alert.AlertType.ERROR);
                 errorAlert.setHeaderText("Duplicate name");
@@ -301,7 +304,7 @@ public class NicTool {
             if (index >= 0) {
                 profile.removeProfile(index);
                 profileSelect.getItems().remove(index);
-                ProfileContainer.removeProfileFromFile(".Profile.xml", index);
+                removeProfileFromFile.remove(".Profile.xml", index);
             }
         }
     };
@@ -320,7 +323,7 @@ public class NicTool {
 
     private void updateProfileFromFile (String fileName) throws IOException {
         ProfileContainer.Profiles profiles = new ProfileContainer.Profiles();
-        profiles = ProfileContainer.loadProfilesFromFile(fileName);
+        profiles = loadProfilesFromFile.load(fileName);
         for (int i = 0; i < profiles.size(); i++) {
             profile.addProfile(profiles.getNic(i), profiles.getProfileName(i));
             profileSelect.getItems().add(profiles.getProfileName(i));

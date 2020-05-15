@@ -11,4 +11,7 @@
     <Tab fx:id="NetworkScannerTab" closable="false" text="Network scanner">
         <fx:include fx:id="networkScanner" source="../Resources/NetworkScanner.fxml" />
     </Tab>
+    <Tab fx:id="trafficGeneratorTab" closable="false" text="Traffic generator">
+        <fx:include fx:id="trafficGenerator" source="../Resources/NetworkTrafficGenerator.fxml" />
+    </Tab>
 </TabPane>

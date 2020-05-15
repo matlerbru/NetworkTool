@@ -23,7 +23,7 @@ public class UdpPacketSenderThread extends Thread {
         return message.length;
     }
 
-    public void setMessageLength(int messageLength) {
+    private void setMessageLength(int messageLength) {
         calculateMessage(messageLength + 3);
     }
 
@@ -53,18 +53,16 @@ public class UdpPacketSenderThread extends Thread {
     @Override
     public void run(){
         try {
-        if (port == -1 || targetAddress == null) {
-            throw new InstantiationException("Required field not set");
-        }
-
-
+            if (port == -1 || targetAddress == null) {
+                throw new InstantiationException("Required field not set");
+            }
             DatagramPacket packet = new DatagramPacket(message, message.length, targetAddress, port);
             DatagramSocket socket = new DatagramSocket();
-
             while (true) {
                 socket.send(packet);
+                if (Thread.interrupted()) throw new InterruptedException("Interrupted");
             }
-
+        } catch (InterruptedException e) {
         } catch (Exception e) {
             e.printStackTrace();
         }

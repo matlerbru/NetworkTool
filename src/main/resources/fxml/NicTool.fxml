@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox fx:id="NicSettings" minHeight="90.0" prefHeight="196.0" prefWidth="615.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.mlb.NetworkTool.NicTool">
+    <children>
+        <BorderPane fx:id="resultPane" minWidth="220.0" prefWidth="220.0">
+            <center>
+                <ListView fx:id="profileSelect" prefHeight="200.0" prefWidth="220.0" BorderPane.alignment="CENTER" />
+            </center>
+            <bottom>
+                <GridPane BorderPane.alignment="CENTER">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="10.0" prefWidth="60.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="10.0" prefWidth="60.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="10.0" prefWidth="60.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="0.0" prefHeight="5.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <Button fx:id="addProfileButton" mnemonicParsing="false" prefWidth="60.0" text="Add" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+                        <Button fx:id="loadProfileButton" mnemonicParsing="false" prefWidth="60.0" text="Load" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+                        <Button fx:id="removeProfileButton" mnemonicParsing="false" prefWidth="60.0" text="Delete" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+                    </children>
+                </GridPane>
+            </bottom>
+            <top>
+                <Pane minHeight="0.0" prefHeight="10.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+            </top>
+            <left>
+                <Pane prefHeight="200.0" prefWidth="10.0" BorderPane.alignment="CENTER" />
+            </left>
+            <right>
+                <Pane prefHeight="200.0" prefWidth="10.0" BorderPane.alignment="CENTER" />
+            </right>
+        </BorderPane>
+        <BorderPane fx:id="setupPane" maxWidth="390.0">
+            <top>
+                <GridPane alignment="center" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER_RIGHT">
+                    <children>
+                        <Label fx:id="nicLabel" ellipsisString="" prefHeight="17.0" prefWidth="25.0" text="NIC:" GridPane.rowIndex="1" />
+                        <ComboBox fx:id="nicSelector" maxWidth="1.7976931348623157E308" minWidth="220.0" promptText="Select" visibleRowCount="20" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="1" />
+                    </children>
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="0.0" prefWidth="95.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="100.0" prefWidth="120.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="0.0" prefWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="40.0" minWidth="0.0" prefWidth="40.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="125.0" minWidth="125.0" prefWidth="125.0" />
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints maxHeight="10.0" minHeight="0.0" prefHeight="10.0" />
+                        <RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
+                        <RowConstraints maxHeight="10.0" minHeight="0.0" prefHeight="10.0" />
+                    </rowConstraints>
+                </GridPane>
+            </top>
+            <center>
+                <GridPane BorderPane.alignment="TOP_RIGHT">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="0.0" prefWidth="95.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="100.0" prefWidth="120.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="0.0" prefWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="40.0" minWidth="0.0" prefWidth="40.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="125.0" minWidth="125.0" prefWidth="125.0" />
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints maxHeight="10.0" minHeight="0.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="25.0" minHeight="15.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="25.0" minHeight="15.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="25.0" minHeight="15.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <Label fx:id="ipLabel" ellipsisString="" text="IP:" GridPane.rowIndex="1" />
+                        <Label fx:id="subnetLabel" ellipsisString="" text="Subnet mask:" GridPane.rowIndex="3" />
+                        <Label fx:id="gatewayLabel" ellipsisString="" text="Default gateway:" GridPane.rowIndex="5" />
+                        <Label fx:id="macLabel" ellipsisString="" text="MAC:" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <Label fx:id="dhcpLabel" ellipsisString="" text="DHCP:" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                        <Label fx:id="nameLabel" ellipsisString="" text="Name:" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                        <TextField fx:id="ip" alignment="CENTER" disable="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+                        <TextField fx:id="subnetMask" alignment="CENTER" disable="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+                        <TextField fx:id="defaultGateway" alignment="CENTER" disable="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+                        <TextField fx:id="macAdress" disable="true" editable="false" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+                        <CheckBox fx:id="dhcp" disable="true" mnemonicParsing="false" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+                        <TextField fx:id="name" disable="true" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+                    </children>
+                </GridPane>
+            </center>
+            <bottom>
+                <GridPane BorderPane.alignment="CENTER_RIGHT">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="10.0" prefWidth="60.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="10.0" prefWidth="60.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="10.0" prefWidth="60.0" />
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
+                        <ColumnConstraints />
+                        <ColumnConstraints />
+                        <ColumnConstraints />
+                        <ColumnConstraints />
+                        <ColumnConstraints />
+                        <ColumnConstraints />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="0.0" prefHeight="5.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="25.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <Button fx:id="applyButton" disable="true" mnemonicParsing="false" prefWidth="60.0" text="Apply" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                    </children>
+                </GridPane>
+            </bottom>
+        </BorderPane>
+    </children>
+</HBox>

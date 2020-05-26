@@ -1,12 +1,13 @@
 package org.mlb.NetworkTrafficGenerator;
 
-public class NetworkLoadReader {
+import org.hyperic.sigar.*;
 
+public class NetworkLoadReader {
     public NetworkLoadReader() {
 
+
+
+
+
     }
-
-
-
-
 }

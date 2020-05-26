@@ -35,6 +35,12 @@
       <artifactId>javafx-fxml</artifactId>
       <version>13</version>
     </dependency>
+    <dependency>
+      <groupId>com.github.votoanthuan</groupId>
+      <artifactId>sigar</artifactId>
+      <version>1.6.4</version>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -58,10 +64,6 @@
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.0.2</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>

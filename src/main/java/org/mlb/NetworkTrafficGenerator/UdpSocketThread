@@ -1,0 +1,43 @@
+package org.mlb.NetworkTrafficGenerator;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.LinkedList;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.lang3.concurrent.TimedSemaphore;
+
+protected class UdpSocketThread extends Thread {
+
+    private static final TimedSemaphore semaphore = new TimedSemaphore(1, TimeUnit.MILLISECONDS, 2);
+
+    private static int amountOfCreatedThreads;
+
+    public Thread createAndGetThread() {
+        Thread thread = createUdpSocketThread();
+        return thread;
+    }
+
+    private Thread createUdpSocketThread() {
+        return new Thread(() -> {
+            try {
+                DatagramPacket packet = new DatagramPacket(message, message.length, targetAddress, port);
+                DatagramSocket socket = new DatagramSocket();
+                while (true) {
+                    semaphore.acquire();
+                    socket.send(packet);
+                    if (Thread.interrupted()) {
+                        throw new InterruptedException();
+                    }
+                    if (semaphore.getAvailablePermits() > 1) {
+                        System.out.println("time constrain overstepped");
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+}

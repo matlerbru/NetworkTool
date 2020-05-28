@@ -35,11 +35,13 @@
       <artifactId>javafx-fxml</artifactId>
       <version>13</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->  
     <dependency>
-      <groupId>com.github.votoanthuan</groupId>
-      <artifactId>sigar</artifactId>
-      <version>1.6.4</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.10</version>
     </dependency>
+
 
   </dependencies>
 

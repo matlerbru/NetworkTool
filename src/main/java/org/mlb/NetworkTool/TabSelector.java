@@ -26,6 +26,13 @@ public class TabSelector implements Initializable {
         return networkScannerController;
     }
 
+    @FXML
+    private NetworkTrafficGenerator trafficGeneratorController; 
+
+    public NetworkTrafficGenerator NetworkTrafficGenerator() {
+        return trafficGeneratorController;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 

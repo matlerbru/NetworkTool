@@ -197,7 +197,7 @@ public class NetworkScannerService {
             String mac = macAddr;
             mac = mac.replace("-", ":");
             mac = mac.substring(0, 8);
-            File file = new File("MacAddress.xml");
+            File file = new File("src/main/resources/MacAddress.xml");
             Scanner scanner = new Scanner(file);
             while(scanner.hasNextLine()) {
                 String line = scanner.nextLine();

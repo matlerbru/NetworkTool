@@ -8,26 +8,19 @@ import javafx.fxml.Initializable;
 import java.net.*;
 import java.util.ResourceBundle;
 import org.mlb.NetworkTrafficGenerator.UdpPacketSenderThread;
+
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.*;
 
 import static javafx.application.Platform.runLater;
 
 public class NetworkTrafficGenerator implements Initializable {
 
     @FXML
-    private HBox trafficGenerator;
+    private HBox generator;
 
     @FXML
-    private BorderPane resultPane;
-
-    @FXML
-    private BorderPane setupPane;
-
-    @FXML
-    private ComboBox nicSelector;
+    private BorderPane generatorPane;
 
     @FXML
     private TextField ip;
@@ -36,15 +29,18 @@ public class NetworkTrafficGenerator implements Initializable {
     private TextField port;
 
     @FXML
-    private RadioButton udp;
+    private TextField messageLength;
 
     @FXML
-    private RadioButton tcp;
+    private TextField frequency;
+
+    @FXML
+    private RadioButton udp;
 
     @FXML
     private Button startGenerator;
 
-    private UdpPacketSenderThread packageSender;
+    private UdpPacketSenderThread packageSender; 
 
     private final ToggleGroup group = new ToggleGroup();
 
@@ -62,11 +58,7 @@ public class NetworkTrafficGenerator implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        trafficGenerator.setHgrow(resultPane, Priority.ALWAYS);
-        trafficGenerator.setHgrow(setupPane, Priority.ALWAYS);
-
-        setNicData();
-        nicSelector.getSelectionModel().selectFirst();
+        generator.setHgrow(generatorPane, Priority.ALWAYS);
 
         ip.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal) {
@@ -80,17 +72,32 @@ public class NetworkTrafficGenerator implements Initializable {
             }
         });
 
+        messageLength.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) {
+                messageLengthHandler();
+            }
+        });
+
+        
+        frequency.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) {
+                frequencyHandler();
+            }
+        });
+
         startGenerator.setOnAction(startGeneratorHandler);
         initRadiobuttonGroup();
     }
 
     private void startGenerator() {
-        packageSender = new UdpPacketSenderThread(1);
+        packageSender = new UdpPacketSenderThread(20);
+        packageSender.setMessageLength(Integer.parseInt(this.messageLength.getText()) -28 );
         packageSender.setName("UDP packet sender");
         packageSender.setPriority(1);
 
         packageSender.setPort(Integer.parseInt(port.getText()));
         packageSender.setTargetAddress(ip.getText());
+        packageSender.setFrequency(Integer.parseInt(frequency.getText()));
         packageSender.start();
 
         runLater(() -> startGenerator.setText("Stop"));
@@ -99,14 +106,6 @@ public class NetworkTrafficGenerator implements Initializable {
     private void stopGenerator() {
         packageSender.interrupt();
         runLater(() -> startGenerator.setText("Start"));
-    }
-
-    private void setNicData() {
-        nicSelector.getItems().clear();
-        nicSelector.getItems().add("Any");
-        for (NetworkInterfaceController nic : NetworkInterface.getSystemNetworkInterfaceControllers()) {
-            nicSelector.getItems().add(nic.getName());
-        }
     }
 
     private void ipHandler() {
@@ -128,15 +127,31 @@ public class NetworkTrafficGenerator implements Initializable {
         }
     }
 
+    private void messageLengthHandler() {
+        try {
+            int length = Integer.parseInt(this.messageLength.getText());
+            if (length < 28 || length > 65535) {
+                throw new NumberFormatException("Port number out of range");
+            }
+        } catch (NumberFormatException e) {
+            messageLength.setText("28");
+        }
+    }
+
+    private void frequencyHandler() {
+        try {
+            int frequency = Integer.parseInt(this.frequency.getText());
+            if (frequency < 1 || frequency > 10000) {
+                throw new NumberFormatException("Frequency not valid");
+            }
+        } catch (NumberFormatException e) {
+            frequency.setText("1000");
+        }
+    }
+
     private void initRadiobuttonGroup() {
         udp.setToggleGroup(group);
         udp.setSelected(true);
-
-        tcp.setToggleGroup(group);
     }
-
-
-
-
 
 }

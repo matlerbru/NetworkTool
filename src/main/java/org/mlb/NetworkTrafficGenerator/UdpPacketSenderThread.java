@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.concurrent.TimedSemaphore;
-import org.mlb.NetworkTool.Main;
 
 public class UdpPacketSenderThread extends Thread {
 
@@ -23,15 +22,15 @@ public class UdpPacketSenderThread extends Thread {
 
     private int port = -1;
 
+    private int frequency = -1;
+
     private InetAddress targetAddress = null;
 
     private byte[] message;
 
     private LinkedList<UdpSocketThread> sender = new LinkedList<>();
 
-    private static final TimedSemaphore semaphore = new TimedSemaphore(1, TimeUnit.SECONDS, 1);
-
-    private double totalThroughput;
+    private static TimedSemaphore semaphore = new TimedSemaphore(1, TimeUnit.SECONDS, 1);
 
     public int getMessageLength() {
         return message.length;
@@ -64,8 +63,8 @@ public class UdpPacketSenderThread extends Thread {
         }
     }
 
-    public double getThroughput() {
-        return totalThroughput;
+    public void setFrequency(int frequency){
+        this.frequency = frequency;
     }
 
     @Override
@@ -77,12 +76,11 @@ public class UdpPacketSenderThread extends Thread {
                 throw new InstantiationException("Required field not set");
             }
             for (int i = 0; i < amountOfThreads-1; i++) { 
-                sender.add(i, new UdpSocketThread(socket, packet));
+                sender.add(i, new UdpSocketThread(socket, packet, frequency));
                 sender.get(i).start();
             }
             while (true) {    
                 semaphore.acquire();
-                calculateThroughput();
                 if (Thread.interrupted()) {
                     throw new InterruptedException("Interrupted");
                 }
@@ -90,20 +88,10 @@ public class UdpPacketSenderThread extends Thread {
         } catch (final InterruptedException e) {
             for (Thread thread : sender) {
                 thread.interrupt();
-                Main.controller.NetworkTrafficGenerator().setThroughput(0);
             }
         } catch (final Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private void calculateThroughput() {
-        double totalMessagesSent = 0.0;
-        for (UdpSocketThread thread : sender) {
-            totalMessagesSent += (double)thread.getMessagesSentAndReset();
-        }
-        totalThroughput = totalMessagesSent*((message.length+28.0)*8.0)/1000000.0;
-        Main.controller.NetworkTrafficGenerator().setThroughput(totalThroughput);
     }
 
     private void calculateMessage(final int messageLength) {

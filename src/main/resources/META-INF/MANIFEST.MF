@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Build-Jdk-Spec: 14
+Package: org.mlb.NetworkTool
+Created-By: mlb
+Main-Class: org.mlb.NetworkTool.Starter

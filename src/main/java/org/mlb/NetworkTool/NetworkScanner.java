@@ -1,5 +1,8 @@
 package org.mlb.NetworkTool;
 
+import org.mlb.Utility.*;
+
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -196,8 +199,8 @@ public class NetworkScanner implements Initializable {
         new Thread(() -> {
             updateGuiToStartScan();
             while(true) {
-                Utility.Threads.sleep(10);
-                int scansRunning = Utility.Threads.getAmountOfThreadsAlive(scans);
+                Sleep.sleep(10);
+                int scansRunning = AmountOfThreadsAlive.getAmountOfThreadsAlive(scans);
                 if (scansRunning == 0 || !scanInProgress) {
                     break;
                 }
@@ -224,7 +227,7 @@ public class NetworkScanner implements Initializable {
         new Thread(() -> {
             updateGuiToStartScan();
             while(scan.isAlive() && scanInProgress){
-                Utility.Threads.sleep(10);
+                Sleep.sleep(10);
                 setProgressBar(scanner.getProgress());
             }
             updateGuiToEndScan();

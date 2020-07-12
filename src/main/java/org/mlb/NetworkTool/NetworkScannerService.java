@@ -1,5 +1,6 @@
 package org.mlb.NetworkTool;
 
+import org.mlb.Utility.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -54,7 +55,7 @@ public class NetworkScannerService {
                     progress = -1.0;
                 }
             }
-            Utility.Threads.waitForAllThreadsToDie(threads);
+            WaitForAllThreadsToDie.wait(threads);
         } catch (Exception e) {
             progress = -1.0;
         }
@@ -109,7 +110,7 @@ public class NetworkScannerService {
 
     private String formatIpAddress(NetworkInterfaceController nic) {
         try {
-            return nic.getIPaddress().substring(0, Utility.ordinalIndexOf(nic.getIPaddress(), ".", 3) + 1);
+            return nic.getIPaddress().substring(0, OrdinalIndexOf.ordinalIndexOf(nic.getIPaddress(), ".", 3) + 1);
         } catch (Exception e) {
             throw new NumberFormatException();
         }
@@ -118,7 +119,7 @@ public class NetworkScannerService {
     private void loginAndWaitInQueue() {
         boolean loggedIn = queue.tryLogin();
         while (!loggedIn) {
-            Utility.Threads.sleep(10);
+            Sleep.sleep(10);
             loggedIn = queue.tryLogin();
         }
     }
@@ -202,8 +203,8 @@ public class NetworkScannerService {
             while(scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 if(line.contains(mac)) {
-                    int startString = Utility.ordinalIndexOf(line, "\"", 3) + 1;
-                    int endString = Utility.ordinalIndexOf(line, "\"", 4);
+                    int startString = OrdinalIndexOf.ordinalIndexOf(line, "\"", 3) + 1;
+                    int endString = OrdinalIndexOf.ordinalIndexOf(line, "\"", 4);
                     manufacturer = line.substring(startString, endString);
                     break;
                 }
@@ -214,5 +215,4 @@ public class NetworkScannerService {
             return "NA";
         }
     }
-
 }

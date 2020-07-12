@@ -57,10 +57,8 @@ class UdpSocketThread extends Thread {
     private void setSemaphore(int frequency){
         if (frequency > 1000) {
             semaphore = new TimedSemaphore(10000/(frequency), TimeUnit.MILLISECONDS, 10);
-            System.out.println("over semaphore = new TimedSemaphore(10, TimeUnit.SECONDS, " + 10000/(frequency) + "));");
         } else {
             semaphore = new TimedSemaphore(1000/frequency, TimeUnit.MILLISECONDS, 1);
-            System.out.println("under semaphore = new TimedSemaphore(1, TimeUnit.SECONDS, " + 1000/frequency + "));");
         }
     }
 }

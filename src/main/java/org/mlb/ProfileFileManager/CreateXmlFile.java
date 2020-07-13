@@ -6,20 +6,14 @@ class CreateXmlFile<file> {
 
     private File file;
 
-    public CreateXmlFile(String fileName, boolean includeHeader) throws IOException {
-        createXmlFile(fileName, includeHeader);
-    }
-
     public CreateXmlFile(String fileName) throws IOException {
-        createXmlFile(fileName, true);
+        createXmlFile(fileName);
     }
 
-    private void createXmlFile(String fileName, boolean includeHeader) throws IOException {
+    private void createXmlFile(String fileName) throws IOException {
         file = new File(fileName);
         if  (file.createNewFile()) {
-            if (includeHeader) {
-                printXmlHeaderToFile();
-            }
+            printXmlHeaderToFile();
         } else throw new IOException("File already existing: " + fileName);
     }
 

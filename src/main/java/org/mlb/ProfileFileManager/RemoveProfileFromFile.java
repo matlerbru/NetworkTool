@@ -19,9 +19,7 @@ public class RemoveProfileFromFile {
         }
         File tempFile = new File("temp" + fileName);
 
-        boolean readingProfile = false;
         int readingIndex = -1;
-        int lineNumber = 0;
 
         while (fileReader.hasNextLine()){
             String line = fileReader.nextLine();
@@ -29,7 +27,7 @@ public class RemoveProfileFromFile {
             if (!(readingIndex == index)) {
                 try {
                     if (!tempFile.exists()) {
-                        new CreateXmlFile(tempFile.getName(), false);
+                        new CreateXmlFile(tempFile.getName());
                     }
                 } catch (IOException e) {
                 }

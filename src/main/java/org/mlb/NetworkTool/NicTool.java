@@ -1,6 +1,8 @@
 package org.mlb.NetworkTool;
 
 import org.mlb.ProfileFileManager.*;
+import org.mlb.NetworkInterfaceTool.*;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;

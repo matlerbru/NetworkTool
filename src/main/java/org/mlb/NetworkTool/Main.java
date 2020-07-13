@@ -1,5 +1,7 @@
 package org.mlb.NetworkTool;
 
+import org.mlb.NetworkInterfaceTool.*;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

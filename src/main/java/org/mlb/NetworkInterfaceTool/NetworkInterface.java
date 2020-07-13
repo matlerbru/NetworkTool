@@ -1,4 +1,7 @@
-package org.mlb.NetworkTool;
+package org.mlb.NetworkInterfaceTool;
+
+import org.mlb.NetworkTool.*;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;

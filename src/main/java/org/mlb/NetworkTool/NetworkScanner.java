@@ -2,6 +2,8 @@ package org.mlb.NetworkTool;
 
 import org.mlb.Utility.*;
 
+import org.mlb.NetworkScanner.*;
+import org.mlb.NetworkInterfaceTool.*;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

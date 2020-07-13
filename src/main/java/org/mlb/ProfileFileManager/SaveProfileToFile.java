@@ -14,7 +14,7 @@ public class SaveProfileToFile {
             File file = new File(fileName);
 
             if (!file.exists()) {
-                new CreateXmlFile(fileName);
+                file = CreateXmlFile.createXmlFile(fileName);
             }
 
             PrintStream fileWriter = new PrintStream(new FileOutputStream(fileName, true));

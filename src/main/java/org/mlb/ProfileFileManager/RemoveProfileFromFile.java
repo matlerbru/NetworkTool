@@ -18,27 +18,28 @@ public class RemoveProfileFromFile {
             e.printStackTrace();
         }
         File tempFile = new File("temp" + fileName);
-
-        int readingIndex = -1;
-
+        int lineNumber = -1;
+        int profileIndex = -1;
         while (fileReader.hasNextLine()){
             String line = fileReader.nextLine();
-            if (line.contains("<profile>")) readingIndex++;
-            if (!(readingIndex == index)) {
+            lineNumber++;
+            if (line.contains("<profile>")) profileIndex++;
+            if (!(profileIndex == index)) {
                 try {
                     if (!tempFile.exists()) {
-                        new CreateXmlFile(tempFile.getName());
+                        tempFile = CreateXmlFile.createXmlFile(tempFile.getName());
                     }
                 } catch (IOException e) {
                 }
-                PrintStream fileWriter = null;
-                try {
-                    fileWriter = new PrintStream(new FileOutputStream(tempFile, true));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                if (lineNumber > 1) {
+                    try {
+                        PrintStream fileWriter = new PrintStream(new FileOutputStream(tempFile, true));
+                        fileWriter.println(line);
+                        fileWriter.close();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
                 }
-                fileWriter.println(line);
-                fileWriter.close();
             }
         }
         fileReader.close();

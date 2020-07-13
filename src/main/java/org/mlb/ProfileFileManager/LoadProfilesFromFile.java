@@ -13,7 +13,7 @@ public class LoadProfilesFromFile {
         File file = new File(fileName);
 
         if (!file.exists()) {
-            new CreateXmlFile(fileName);
+            file = CreateXmlFile.createXmlFile(fileName);
         }
 
         Scanner fileReader = new Scanner(file);

@@ -4,20 +4,15 @@ import java.io.*;
 
 class CreateXmlFile<file> {
 
-    private File file;
-
-    public CreateXmlFile(String fileName) throws IOException {
-        createXmlFile(fileName);
-    }
-
-    private void createXmlFile(String fileName) throws IOException {
-        file = new File(fileName);
+    public static File createXmlFile(String fileName) throws IOException {
+        File file = new File(fileName);
         if  (file.createNewFile()) {
-            printXmlHeaderToFile();
+            printXmlHeaderToFile(file);
         } else throw new IOException("File already existing: " + fileName);
+        return file;
     }
 
-    private void printXmlHeaderToFile() {
+    private static void printXmlHeaderToFile(File file) {
         try {
             PrintStream fileWriter = new PrintStream(new FileOutputStream(file.getName(), true));
             fileWriter.println("<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>");
@@ -27,10 +22,6 @@ class CreateXmlFile<file> {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-    }
-
-    public File getFile() {
-        return file;
     }
 
 }

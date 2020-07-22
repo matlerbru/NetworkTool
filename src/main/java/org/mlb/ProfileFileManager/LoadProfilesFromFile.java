@@ -8,70 +8,66 @@ import java.util.Scanner;
 
 public class LoadProfilesFromFile {
 
-    public static Profiles load(String fileName) throws IOException {
+    private File file;
+    private Profiles nicProfiles = new Profiles();
+    private Scanner fileReader;
+    private String line;
 
-        File file = new File(fileName);
+    public Profiles load(String fileName) throws IOException {
+        file = new File(fileName);
+        fileReader = new Scanner(file);
 
-        Profiles nicProfiles = new Profiles();
+        createFileIfNotExisting();
+        extractAllProfiles();
 
-        if (!file.exists()) {
-            file = CreateXmlFile.createXmlFile(fileName);
-        }
-
-        Scanner fileReader = new Scanner(file);
-
-        NetworkInterfaceController tempNic = new NetworkInterfaceController();
-        String tempProfileName = new String("");
-        boolean readingProfile = false;
-
-        while (fileReader.hasNextLine()){
-            String line = fileReader.nextLine();
-            if (line.contains("<profile>")) {
-                readingProfile = true;
-            } else if (line.contains("</profile>")) {
-                readingProfile = false;
-                nicProfiles.addProfile(tempNic, tempProfileName);
-            }
-            if (readingProfile) {
-                if (line.contains("<profileName>")) {
-                    String temp = line.replace("    <profileName>", "");
-                    temp = temp.replace("</profileName>", "");
-                    tempProfileName = temp;
-
-                } else if (line.contains("<name>")) {
-                    String temp = line.replace("    <name>", "");
-                    temp = temp.replace("</name>", "");
-                    tempNic.setName(temp);
-
-                } else if (line.contains("<displayName>")) {
-                    String temp = line.replace("    <displayName>", "");
-                    temp = temp.replace("</displayName>", "");
-                    tempNic.setDisplayName(temp);
-
-                } else if (line.contains("<DHCP>")) {
-                    String temp = line.replace("    <DHCP>", "");
-                    temp = temp.replace("</DHCP>", "");
-                    tempNic.setDhcp(temp.contains("true"));
-
-                } else if (line.contains("<IP>")) {
-                    String temp = line.replace("    <IP>", "");
-                    temp = temp.replace("</IP>", "");
-                    tempNic.setIPaddress(temp);
-
-                } else if (line.contains("<subnetMask>")) {
-                    String temp = line.replace("    <subnetMask>", "");
-                    temp = temp.replace("</subnetMask>", "");
-                    tempNic.setSubnetMask(temp);
-
-                } else if (line.contains("<defaultGateway>")) {
-                    String temp = line.replace("    <defaultGateway>", "");
-                    temp = temp.replace("</defaultGateway>", "");
-                    tempNic.setDefaultGateway(temp);
-                }
-            }
-        }
         fileReader.close();
         return nicProfiles;
+    }
+
+    private void createFileIfNotExisting() throws IOException {
+        if (!file.exists()) {
+            file = CreateXmlFile.createXmlFile(file.getName());
+        }
+    }
+
+    private void extractAllProfiles() {
+        while (fileReader.hasNextLine()){
+            line = fileReader.nextLine();
+            if (line.contains("<profile>")) {
+                extractNic();
+            }    
+        }
+    }
+
+    private void extractNic() {
+        String profileName = null;
+        NetworkInterfaceController nic = new NetworkInterfaceController();
+
+        while (fileReader.hasNextLine()){    
+            line = fileReader.nextLine();
+            if (line.contains("<profileName>")) {
+                profileName = extractXmlSubchild("profileName");
+            } else if (line.contains("<name>")) {
+                nic.setName(extractXmlSubchild("name"));
+            } else if (line.contains("<displayName>")) {
+                nic.setDisplayName(extractXmlSubchild("displayName"));
+            } else if (line.contains("<DHCP>")) {
+                nic.setDhcp(extractXmlSubchild("DHCP").contains("true"));
+            } else if (line.contains("<IP>")) {
+                nic.setIPaddress(extractXmlSubchild("IP"));
+            } else if (line.contains("<subnetMask>")) {
+                nic.setSubnetMask(extractXmlSubchild("subnetMask"));
+            } else if (line.contains("<defaultGateway>")) {
+                nic.setDefaultGateway(extractXmlSubchild("defaultGateway"));
+            } else if (line.contains("</profile>")) {
+                nicProfiles.addProfile(nic, profileName);
+                break;
+            }
+        }
+    }
+
+    private String extractXmlSubchild(String subchild) {
+        return line.trim().replace("<" + subchild + ">", "").replace("</" + subchild + ">", "");
     }
 
 }

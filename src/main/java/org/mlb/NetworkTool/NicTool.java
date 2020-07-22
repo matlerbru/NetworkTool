@@ -115,8 +115,7 @@ public class NicTool {
 
     public void initialize () {
         try {
-            LoadProfilesFromFile.load(".profile.xml");
-            updateProfileFromFile(".profile.xml");
+            loadProfilesFromFile();
             setNicData();
             Path path = Paths.get(".Profile.xml");
             Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
@@ -164,6 +163,18 @@ public class NicTool {
 
 
         } catch (Exception e) {
+        }
+    }
+  
+    private void loadProfilesFromFile() {
+        try {
+            Profiles profiles = LoadProfilesFromFile.load(".profile.xml");
+            for (String key : profiles.getListOfKeys()) {
+                ProfileContainer.container.addProfile(profiles.getProfile(key), key);
+                profileSelect.getItems().add(key);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -320,12 +331,6 @@ public class NicTool {
 
     private void setUiTo (NetworkInterfaceController nic) {
         setUiTo(nic, true);
-    }
-
-    private void updateProfileFromFile (String fileName) throws IOException {
-        for (String key : ProfileContainer.container.getListOfKeys()) {
-            profileSelect.getItems().add(key);
-        }
     }
 
     private String getProfileNameFromComboBox() {

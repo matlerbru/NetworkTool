@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class RemoveProfileFromFile {
 
-    public static void remove(String fileName, int index) {
+    public void remove(String fileName, int index) {
         File file = new File(fileName);
         Scanner fileReader = null;
         try {

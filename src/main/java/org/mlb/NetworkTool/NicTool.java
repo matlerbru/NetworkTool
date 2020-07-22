@@ -76,7 +76,7 @@ public class NicTool {
             try {
                 ProfileContainer.container.addProfile(tempNic, result.get().trim());
                 profileSelect.getItems().add(result.get());
-                SaveProfileToFile.save(".profile.xml", tempNic, result.get());
+                new SaveProfileToFile().save(".profile.xml", tempNic, result.get());
 
             } catch (IllegalArgumentException e) {
                 Alert errorAlert = new Alert(Alert.AlertType.ERROR);
@@ -96,7 +96,7 @@ public class NicTool {
                 String profileName = getProfileNameFromComboBox();
                 ProfileContainer.container.removeProfile(profileName);
                 profileSelect.getItems().remove(index);
-                RemoveProfileFromFile.remove(".Profile.xml", index);
+                new RemoveProfileFromFile().remove(".Profile.xml", index);
             }
         }
     };
@@ -168,7 +168,7 @@ public class NicTool {
   
     private void loadProfilesFromFile() {
         try {
-            Profiles profiles = LoadProfilesFromFile.load(".profile.xml");
+            Profiles profiles = new LoadProfilesFromFile().load(".profile.xml");
             for (String key : profiles.getListOfKeys()) {
                 ProfileContainer.container.addProfile(profiles.getProfile(key), key);
                 profileSelect.getItems().add(key);

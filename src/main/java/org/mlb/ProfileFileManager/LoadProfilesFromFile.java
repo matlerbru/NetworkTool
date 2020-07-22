@@ -8,9 +8,11 @@ import java.util.Scanner;
 
 public class LoadProfilesFromFile {
 
-    public static void load(String fileName) throws IOException {
+    public static Profiles load(String fileName) throws IOException {
 
         File file = new File(fileName);
+
+        Profiles nicProfiles = new Profiles();
 
         if (!file.exists()) {
             file = CreateXmlFile.createXmlFile(fileName);
@@ -28,7 +30,7 @@ public class LoadProfilesFromFile {
                 readingProfile = true;
             } else if (line.contains("</profile>")) {
                 readingProfile = false;
-                ProfileContainer.container.addProfile(tempNic, tempProfileName);
+                nicProfiles.addProfile(tempNic, tempProfileName);
             }
             if (readingProfile) {
                 if (line.contains("<profileName>")) {
@@ -69,6 +71,7 @@ public class LoadProfilesFromFile {
             }
         }
         fileReader.close();
+        return nicProfiles;
     }
 
 }

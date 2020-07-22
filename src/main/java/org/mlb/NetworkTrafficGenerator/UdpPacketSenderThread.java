@@ -73,6 +73,7 @@ public class UdpPacketSenderThread extends Thread {
             DatagramSocket socket = new DatagramSocket();
             DatagramPacket packet = new DatagramPacket(message, message.length, targetAddress, port);
             if (port == -1 || targetAddress == null) {
+                socket.close();
                 throw new InstantiationException("Required field not set");
             }
             for (int i = 0; i < amountOfThreads-1; i++) { 

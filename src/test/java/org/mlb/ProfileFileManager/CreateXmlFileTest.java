@@ -21,7 +21,7 @@ public class CreateXmlFileTest {
             assertFalse("Test file exists and can not be deleted", file.exists());
         }
         try {
-            CreateXmlFile.createXmlFile(testFilePath); //fejl her, hvorfor kan jeg ikke lave den med sti?
+            CreateXmlFile.createXmlFile(testFilePath);
             fileReader = new Scanner(file);
         } catch (IOException e) {
             assertFalse("IOexception", true);

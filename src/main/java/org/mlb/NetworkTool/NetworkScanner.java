@@ -201,8 +201,8 @@ public class NetworkScanner implements Initializable {
         new Thread(() -> {
             updateGuiToStartScan();
             while(true) {
-                Sleep.sleep(10);
-                int scansRunning = AmountOfThreadsAlive.getAmountOfThreadsAlive(scans);
+                Threads.sleep(10);
+                int scansRunning = Threads.getAmountAlive(scans);
                 if (scansRunning == 0 || !scanInProgress) {
                     break;
                 }
@@ -229,7 +229,7 @@ public class NetworkScanner implements Initializable {
         new Thread(() -> {
             updateGuiToStartScan();
             while(scan.isAlive() && scanInProgress){
-                Sleep.sleep(10);
+                Threads.sleep(10);
                 setProgressBar(scanner.getProgress());
             }
             updateGuiToEndScan();

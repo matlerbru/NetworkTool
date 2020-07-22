@@ -59,7 +59,7 @@ public class NetworkScannerService {
                     progress = -1.0;
                 }
             }
-            WaitForAllThreadsToDie.wait(threads);
+            Threads.waitForAllToDie(threads);
         } catch (Exception e) {
             progress = -1.0;
         }
@@ -123,7 +123,7 @@ public class NetworkScannerService {
     private void loginAndWaitInQueue() {
         boolean loggedIn = queue.tryLogin();
         while (!loggedIn) {
-            Sleep.sleep(10);
+            Threads.sleep(10);
             loggedIn = queue.tryLogin();
         }
     }

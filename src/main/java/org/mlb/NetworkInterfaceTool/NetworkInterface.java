@@ -39,23 +39,23 @@ public class NetworkInterface {
     public static void pushNIC (NetworkInterfaceController nic, int index) throws IllegalStateException {
         String name = systemNetworkInterfaceControllers.get(index).getDisplayName();
 
-        String IpCommand = "netsh interface ipv4 set address name=\"" + name + "\"";
-        String NameCommand = "netsh interface set interface name=\"" + name + "\" newname=\"" + nic.getDisplayName() + "\"";
+        String ipCommand = "netsh interface ipv4 set address name=\"" + name + "\"";
+        String nameCommand = "netsh interface set interface name=\"" + name + "\" newname=\"" + nic.getDisplayName() + "\"";
 
-        System.out.println(NameCommand);
+        System.out.println(nameCommand);
 
         if (nic.isDhcp()) {
-            IpCommand = IpCommand + " dhcp";
+            ipCommand = ipCommand + " dhcp";
         } else {
-            IpCommand = IpCommand + " static " + nic.getIPaddress() + " " + nic.getSubnetMask() + " " + nic.getDefaultGateway();
+            ipCommand = ipCommand + " static " + nic.getIPaddress() + " " + nic.getSubnetMask() + " " + nic.getDefaultGateway();
         }
 
         try {
-            System.out.println(IpCommand);
+            System.out.println(ipCommand);
             ProcessBuilder pb = new ProcessBuilder();
-            pb.command("cmd.exe", "/c", IpCommand);
+            pb.command("cmd.exe", "/c", ipCommand);
             Process processIp = pb.start();
-            pb.command("cmd.exe", "/c", NameCommand);
+            pb.command("cmd.exe", "/c", nameCommand);
             pb.start();
 
             BufferedReader readerIp = new BufferedReader(new InputStreamReader(processIp.getInputStream()));

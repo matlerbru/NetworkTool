@@ -213,6 +213,7 @@ public class NetworkScannerService {
                     break;
                 }
             }
+            scanner.close();
             return manufacturer;
         } catch (Exception e) {
             e.printStackTrace();

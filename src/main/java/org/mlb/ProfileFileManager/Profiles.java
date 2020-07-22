@@ -13,7 +13,7 @@ public class Profiles {
 
     public void addProfile(NetworkInterfaceController nic, String profileName) {
         if (container.get(profileName) != null) {
-            throw new IllegalArgumentException("Duplicate profile name");
+            throw new IllegalArgumentException("Duplicate profile name: \"" + profileName + "\"");
         } else {
             NetworkInterfaceController temp = new NetworkInterfaceController();
             NetworkInterfaceController.clone(temp, nic);
@@ -28,7 +28,6 @@ public class Profiles {
     public void removeProfile (String profileName) {
         container.remove(profileName);
     }
-
 
     public int size() {
         return container.size();

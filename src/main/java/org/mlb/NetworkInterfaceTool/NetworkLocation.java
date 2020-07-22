@@ -1,6 +1,5 @@
 package org.mlb.NetworkInterfaceTool;
 
-import org.mlb.NetworkTool.NetworkScanner;
 import javafx.beans.property.SimpleStringProperty;
 
 public class NetworkLocation {

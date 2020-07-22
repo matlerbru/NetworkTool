@@ -1,8 +1,5 @@
 package org.mlb.NetworkInterfaceTool;
 
-import org.mlb.NetworkTool.*;
-
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -59,7 +56,7 @@ public class NetworkInterface {
             pb.command("cmd.exe", "/c", IpCommand);
             Process processIp = pb.start();
             pb.command("cmd.exe", "/c", NameCommand);
-            Process processName = pb.start();
+            pb.start();
 
             BufferedReader readerIp = new BufferedReader(new InputStreamReader(processIp.getInputStream()));
 

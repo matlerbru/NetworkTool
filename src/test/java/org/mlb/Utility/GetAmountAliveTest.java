@@ -2,8 +2,6 @@ package org.mlb.Utility;
 
 import static org.junit.Assert.*;
 
-import org.mlb.NetworkTool.*;
-
 import java.util.LinkedList;
 
 import org.junit.*;

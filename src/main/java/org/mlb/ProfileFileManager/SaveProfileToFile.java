@@ -9,9 +9,9 @@ import java.io.PrintStream;
 
 public class SaveProfileToFile {
 
-    private static PrintStream ps;
+    private PrintStream ps;
 
-    public static void save(String fileName, NetworkInterfaceController nic, String name) {
+    public void save(String fileName, NetworkInterfaceController nic, String name) {
         try {
             createFile(fileName);
             ps = new PrintStream(new FileOutputStream(fileName, true));
@@ -21,7 +21,7 @@ public class SaveProfileToFile {
         }
     }
 
-    private static void createFile(String fileName) {
+    private void createFile(String fileName) {
         File file = new File(fileName);
         if (!file.exists()) {
             try {
@@ -32,7 +32,7 @@ public class SaveProfileToFile {
         }
     }
 
-    private static void printToFile(NetworkInterfaceController nic, String name) {
+    private void printToFile(NetworkInterfaceController nic, String name) {
         ps.println("<profile>");
         ps.println("    <profileName>" + name + "</profileName>");
         ps.println("    <name>" + nic.getName() + "</name>");

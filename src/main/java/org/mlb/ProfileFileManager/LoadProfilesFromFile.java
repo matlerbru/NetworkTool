@@ -15,9 +15,9 @@ public class LoadProfilesFromFile {
 
     public Profiles load(String fileName) throws IOException {
         file = new File(fileName);
+        createFileIfNotExisting();
         fileReader = new Scanner(file);
 
-        createFileIfNotExisting();
         extractAllProfiles();
 
         fileReader.close();
@@ -27,6 +27,9 @@ public class LoadProfilesFromFile {
     private void createFileIfNotExisting() throws IOException {
         if (!file.exists()) {
             file = CreateXmlFile.createXmlFile(file.getName());
+            if (!file.exists()) {
+                throw new IOException("Unable to create file: " + file.getName());
+            }
         }
     }
 

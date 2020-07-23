@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.*;
 
 import java.io.IOException;
@@ -93,10 +94,19 @@ public class NicTool {
         public void handle(ActionEvent event) {
             int index = profileSelect.getSelectionModel().getSelectedIndex();
             if (index >= 0) {
-                String profileName = getProfileNameFromComboBox();
-                ProfileContainer.container.removeProfile(profileName);
-                profileSelect.getItems().remove(index);
-                new RemoveProfileFromFile().remove(".Profile.xml", index);
+                try {
+                    String profileName = getProfileNameFromComboBox();
+                    new RemoveProfileFromFile().remove(".Profile.xml", profileName);
+                    ProfileContainer.container.removeProfile(profileName);
+                    profileSelect.getItems().remove(index);
+                } catch (IOException e) {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("Unable to remove profile");
+                    alert.setContentText(e.toString());
+
+                    alert.showAndWait();
+                }
             }
         }
     };

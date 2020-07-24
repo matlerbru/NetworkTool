@@ -99,7 +99,7 @@ public class NicTool {
                     new RemoveProfileFromFile().remove(".Profile.xml", profileName);
                     ProfileContainer.container.removeProfile(profileName);
                     profileSelect.getItems().remove(index);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     Alert alert = new Alert(AlertType.ERROR);
                     alert.setTitle("Error");
                     alert.setHeaderText("Unable to remove profile");

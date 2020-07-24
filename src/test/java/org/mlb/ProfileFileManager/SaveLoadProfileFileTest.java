@@ -10,17 +10,17 @@ import org.mlb.Utility.*;
 
 public class SaveLoadProfileFileTest {
 
-    private final int AMOUNT_OF_PROFILES_TO_TEST = 1000;
+    private final int AMOUNT_OF_PROFILES_TO_TEST = 10;
 
-    private String testFilePath = "src/test/resources/SaveProfileToFileTest.xml";
+    private String testFilePath = "src/test/resources/SaveLoadProfileFileTest.xml";
     private File file;
 
-    private static Profiles writeProfiles = new Profiles();
-    private static Profiles readProfiles = new Profiles();
+    private Profiles writeProfiles = new Profiles();
+    private Profiles readProfiles = new Profiles();
 
     @Before
     public void CreateAndSaveToFile() {
-        assertFalse("Failure creating file", !checkIfFileExists());
+        assertFalse("Failure deleting file", !deleteFileIfExisting());
         for (int i = 0; i < AMOUNT_OF_PROFILES_TO_TEST; i++) {
             if (!createAndAddProfilesToFile()) {
                 i--;
@@ -33,7 +33,7 @@ public class SaveLoadProfileFileTest {
         }
     }
 
-    private boolean checkIfFileExists() {
+    private boolean deleteFileIfExisting() {
         file = new File(testFilePath);
         if (file.exists()) {
             file.delete();

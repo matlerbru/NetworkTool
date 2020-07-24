@@ -5,52 +5,60 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Scanner;
+
+import org.mlb.Utility.OccourancesOf;
+import org.mlb.Utility.OrdinalIndexOf;
 
 public class RemoveProfileFromFile {
 
-    public void remove(String fileName, int index) {
-        File file = new File(fileName);
-        Scanner fileReader = null;
-        try {
-            fileReader = new Scanner(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+    private File file;
+    private File tempFile;
+
+    private Profiles profiles;
+
+    public void remove(String fileName, String profileName) throws IOException {
+        file = new File(fileName);
+
+String formattedString = formatTempFileName(fileName);
+
+        tempFile = new File(formattedString);
+        profiles = new LoadProfilesFromFile().load(fileName);
+        profiles.removeProfile(profileName);
+
+        printProfilesToFile();
+        
+        useTempFileInsteadOfFile();
+    }
+
+    private String formatTempFileName(String fileName) {
+        int amountOfSlash = OccourancesOf.occourancesOf(fileName, "/");
+        int lastSlashIndex = OrdinalIndexOf.ordinalIndexOf(fileName, "/", amountOfSlash);
+        return fileName.subSequence(0, lastSlashIndex + 1) + "temp" + fileName.substring(lastSlashIndex + 1);
+    }    
+
+    private void printProfilesToFile() throws IOException {
+        for (String key : profiles.getListOfKeys()) {
+            new SaveProfileToFile().save(tempFile.getPath(), profiles.getProfile(key), key);  
         }
-        File tempFile = new File("temp" + fileName);
-        int lineNumber = -1;
-        int profileIndex = -1;
-        while (fileReader.hasNextLine()){
-            String line = fileReader.nextLine();
-            lineNumber++;
-            if (line.contains("<profile>")) profileIndex++;
-            if (!(profileIndex == index)) {
-                try {
-                    if (!tempFile.exists()) {
-                        tempFile = CreateXmlFile.createXmlFile(tempFile.getName());
-                    }
-                } catch (IOException e) {
-                }
-                if (lineNumber > 1) {
-                    try {
-                        PrintStream fileWriter = new PrintStream(new FileOutputStream(tempFile, true));
-                        fileWriter.println(line);
-                        fileWriter.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
+        if (!tempFile.exists()) {
+            try {
+                tempFile = CreateXmlFile.createXmlFile(tempFile.getPath());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-        fileReader.close();
-        Path path = Paths.get(fileName);
-        Path tempPath = Paths.get(tempFile.getName());
+    }
+
+    private void useTempFileInsteadOfFile() throws IOException {
+        Path path = Paths.get(file.getPath());
+        Path tempPath = Paths.get(tempFile.getPath());
         try {
             Files.delete(path);
-            Files.move(tempPath, tempPath.resolveSibling(fileName));
+            Files.move(tempPath, tempPath.resolveSibling(file.getName()));
             Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw new IOException("Unable to move temporary file");
         }
     }
-}
+
+} //temp kommer på først, læg den efter sidste /

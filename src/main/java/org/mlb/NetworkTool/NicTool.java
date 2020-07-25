@@ -2,6 +2,7 @@ package org.mlb.NetworkTool;
 
 import org.mlb.ProfileFileManager.*;
 import org.mlb.NetworkInterfaceTool.*;
+import org.mlb.Utility.*;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -226,13 +227,13 @@ public class NicTool {
                 subnetMask.setText(NetworkInterface.getSystemNetworkInterfaceControllers().get( index ).getSubnetMask());
                 defaultGateway.setText(NetworkInterface.getSystemNetworkInterfaceControllers().get( index ).getDefaultGateway());
             } else {
-                if (!isFormattedAsIp(tempNic.getIPaddress())) {
+                if (!TextFormat.isFormattedAsIp(tempNic.getIPaddress())) {
                     ip.setText("0.0.0.0");
                 } else ip.setText(tempNic.getIPaddress());
-                if (!isFormattedAsIp(tempNic.getSubnetMask())) {
+                if (!TextFormat.isFormattedAsIp(tempNic.getSubnetMask())) {
                     subnetMask.setText("0.0.0.0");
                 } else subnetMask.setText(tempNic.getSubnetMask());
-                if (!isFormattedAsIp(tempNic.getDefaultGateway())) {
+                if (!TextFormat.isFormattedAsIp(tempNic.getDefaultGateway())) {
                     defaultGateway.setText("0.0.0.0");
                 } else defaultGateway.setText(tempNic.getDefaultGateway());
             }
@@ -246,7 +247,7 @@ public class NicTool {
     }
 
     private void ipHandler() {
-        if (isFormattedAsIp(ip.getText()))  {
+        if (TextFormat.isFormattedAsIp(ip.getText()))  {
             tempNic.setIPaddress(ip.getText());
         } else if (ip.getText().length() < 7) {
             this.ip.setText("0.0.0.0");
@@ -257,7 +258,7 @@ public class NicTool {
     }
 
     private void subnetMaskHandler() {
-        if (isFormattedAsIp(subnetMask.getText()))  {
+        if (TextFormat.isFormattedAsIp(subnetMask.getText()))  {
             tempNic.setSubnetMask(subnetMask.getText());
         } else if (subnetMask.getText().length() < 7) {
             subnetMask.setText("0.0.0.0");
@@ -268,7 +269,7 @@ public class NicTool {
     }
 
     private void DefaultGatewayEvent() {
-        if (isFormattedAsIp(defaultGateway.getText())) {
+        if (TextFormat.isFormattedAsIp(defaultGateway.getText())) {
             tempNic.setDefaultGateway(defaultGateway.getText());
         } else if (defaultGateway.getText().length() < 7) {
             defaultGateway.setText("0.0.0.0");
@@ -281,31 +282,6 @@ public class NicTool {
     private void nameHandler() {
         tempNic.setDisplayName(name.getText());
         applyButton.setDisable(false);
-    }
-
-    private boolean isFormattedAsIp(String field) {
-        try {
-            for (int i = 0; i < 3; i++) {
-                if (field.contains(".")) {
-                    int dot = field.indexOf(".");
-                    String string = field.substring(0, dot);
-                    int value = Integer.parseInt(string);
-                    if (value < 0 || value > 255) {
-                        throw new IOException();
-                    }
-                    field = field.substring(dot + 1);
-                } else {
-                    throw new IOException();
-                }
-            }
-            int value = Integer.parseInt(field);
-            if (value < 0 || value > 255) {
-                throw new IOException();
-            }
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     EventHandler<ActionEvent> applyButtonHandler = new EventHandler<ActionEvent>() {

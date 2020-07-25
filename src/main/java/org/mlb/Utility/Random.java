@@ -11,15 +11,7 @@ public class Random {
        return sb.toString().trim();
     }
 
-    public static String getNetworkAddress() {
-        String address = getInt(0, 254) + "." + getInt(0, 254) + "." + getInt(0, 254) + "." + getInt(0, 254);
-        return address;
-    }
-
     public static int getInt(int lowestValue, int highestValue) {
-        if (lowestValue < 0 || highestValue > 255 || lowestValue > highestValue) {
-            throw new IllegalArgumentException();
-        }
         int span = highestValue - lowestValue + 1;
         int number = (int)(lowestValue + Math.random() * span);
         return number;
@@ -29,8 +21,21 @@ public class Random {
         return Math.random() < 0.5;
     }
 
-    public static String getMacAddress() {
-        String address = String.format("%x", getInt(0, 255)).toUpperCase() + "-" + String.format("%x", getInt(0, 255)).toUpperCase() + "-" + String.format("%x", getInt(0, 255)).toUpperCase() + "-" + String.format("%x", getInt(0, 255)).toUpperCase();
+    public static String getNetworkAddress() {
+        String address = getInt(0, 254) + "." + getInt(0, 254) + "." + getInt(0, 254) + "." + getInt(0, 254);
         return address;
+    }
+
+    public static String getMacAddress() {
+        String address = getRandomBitInHex() + "-" + getRandomBitInHex() + "-" + getRandomBitInHex() + "-" + getRandomBitInHex()  + "-" + getRandomBitInHex() + "-" + getRandomBitInHex();
+        return address;
+    }
+
+    private static String getRandomBitInHex() {
+        String hex = Integer.toHexString(getInt(0, 255)).toUpperCase();
+        if (hex.length() == 1) {
+            hex = "0" + hex;
+        }
+        return hex;
     }
 }

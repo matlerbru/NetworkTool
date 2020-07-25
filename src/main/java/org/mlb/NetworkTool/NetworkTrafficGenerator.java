@@ -5,9 +5,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
+import java.io.UncheckedIOException;
 import java.net.*;
 import java.util.ResourceBundle;
 import org.mlb.NetworkTrafficGenerator.UdpPacketSenderThread;
+import org.mlb.Utility.*;
 
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -110,7 +112,7 @@ public class NetworkTrafficGenerator implements Initializable {
 
     private void ipHandler() {
         try {
-            Inet4Address.getByName(ip.getText());
+            if (!TextFormat.isFormattedAsIp(ip.getText())) throw new UnknownHostException();
         } catch (UnknownHostException e) {
             ip.setText("");
         }

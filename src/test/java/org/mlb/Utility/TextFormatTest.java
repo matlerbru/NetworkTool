@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class TestFormatTest {
+public class TextFormatTest {
 
     @Test
     public void isFormattedAsIp() {
@@ -65,6 +65,8 @@ public class TestFormatTest {
         assertEquals(false, TextFormat.isFormattedAsMac("bAA-AA-AA-AAAA-AA"));
 
         assertEquals(false, TextFormat.isFormattedAsMac("AA-AA-AA-AA-Af-AA"));
+
+        assertEquals(false, TextFormat.isFormattedAsMac("AA-AA-AA-A-AA-AA"));
 
         assertEquals(true, TextFormat.isFormattedAsMac("AA-AA-AA-AA-AA-AA"));
 

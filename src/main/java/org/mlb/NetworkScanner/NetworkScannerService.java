@@ -7,6 +7,7 @@ import org.mlb.NetworkInterfaceTool.*;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Scanner;
@@ -29,7 +30,8 @@ public class NetworkScannerService {
     public Thread scan(int nicIndex) {
         return new Thread(() -> {
             NetworkInterfaceController nic = new NetworkInterfaceController();
-            NetworkInterfaceController.clone(nic, NetworkInterface.getSystemNetworkInterfaceControllers().get(nicIndex));
+            NetworkInterfaceController.clone(nic,
+                    NetworkInterface.getSystemNetworkInterfaceControllers().get(nicIndex));
             try {
                 progress = 0;
                 scanNetwork(nic);
@@ -43,10 +45,10 @@ public class NetworkScannerService {
         try {
 
             LinkedList<Thread> threads = new LinkedList<>();
-            for (int i = Main.controller.getNetworkScanner().getRangeMin(); i <= Main.controller.getNetworkScanner().getRangeMax(); i++) {
+            for (int i = Main.controller.getNetworkScanner().getRangeMin(); i <= Main.controller.getNetworkScanner()
+                    .getRangeMax(); i++) {
                 try {
-                    if (!Main.controller.getNetworkScanner().getScanInProgress())
-                    {
+                    if (!Main.controller.getNetworkScanner().getScanInProgress()) {
                         throw new IllegalStateException();
                     }
                     loginAndWaitInQueue();
@@ -68,14 +70,15 @@ public class NetworkScannerService {
     private Thread startThreadAndPingDevice(NetworkInterfaceController nic, int i) {
         return new Thread(() -> {
             try {
-            String address = formatIpAddress(nic);
-            address = address + i;
-            pingDeviceAndGetInformation(address, nic);
+                String address = formatIpAddress(nic);
+                address = address + i;
+                pingDeviceAndGetInformation(address, nic);
             } catch (NullPointerException e) {
                 e.printStackTrace();
             } catch (NumberFormatException e) {
                 runLater(() -> {
-                    double incrementBy = 1.0 / (Main.controller.getNetworkScanner().getRangeMax() - Main.controller.getNetworkScanner().getRangeMin() + 1);
+                    double incrementBy = 1.0 / (Main.controller.getNetworkScanner().getRangeMax()
+                            - Main.controller.getNetworkScanner().getRangeMin() + 1);
                     progress = progress + incrementBy;
                 });
             }
@@ -83,16 +86,16 @@ public class NetworkScannerService {
         });
     }
 
-    private void pingDeviceAndGetInformation(String address, NetworkInterfaceController nic) throws IllegalStateException {
+    private void pingDeviceAndGetInformation(String address, NetworkInterfaceController nic)
+            throws IllegalStateException {
         String hostName = getHostNameFromIp(address, Main.controller.getNetworkScanner().getTimeout());
-        if ( hostName != null ) {
+        if (hostName != null) {
             String macAddr = getMacFromArpTable(address, nic);
             String manufacturer = getManufacturer(macAddr);
             if (!address.equals(nic.getIPaddress())) {
                 final NetworkLocation networkLocation = new NetworkLocation(hostName, address, macAddr, manufacturer);
 
-                if (Main.controller.getNetworkScanner().getScanInProgress())
-                {
+                if (Main.controller.getNetworkScanner().getScanInProgress()) {
                     boolean duplicateNetworkLocation = false;
                     for (int i = 0; i < Main.controller.getNetworkScanner().getTableSize(); i++) {
                         NetworkLocation temp = Main.controller.getNetworkScanner().getTableRow(i);
@@ -107,7 +110,8 @@ public class NetworkScannerService {
             }
         }
         runLater(() -> {
-            double incrementBy = 1.0 / (Main.controller.getNetworkScanner().getRangeMax() - Main.controller.getNetworkScanner().getRangeMin() + 1);
+            double incrementBy = 1.0 / (Main.controller.getNetworkScanner().getRangeMax()
+                    - Main.controller.getNetworkScanner().getRangeMin() + 1);
             progress = progress + incrementBy;
         });
     }
@@ -139,7 +143,7 @@ public class NetworkScannerService {
             String hostName = null;
             while ((line = reader.readLine()) != null) {
                 if (line.length() != 0) {
-                    if (line.contains("Destination host unreachable")){
+                    if (line.contains("Destination host unreachable")) {
                         break;
                     }
                     if (line.contains("Pinging")) {
@@ -160,40 +164,34 @@ public class NetworkScannerService {
         return null;
     }
 
-    private String getMacFromArpTable (String ipAddr, NetworkInterfaceController nic) {
-        ProcessBuilder pb = new ProcessBuilder();
-        pb.command("cmd.exe", "/c", "arp -a");
+    private String getMacFromArpTable(String ipAddr, NetworkInterfaceController nic) {
+
+
         try {
+            ProcessBuilder pb = new ProcessBuilder();
+            pb.command("cmd.exe", "/c", "arp -a");
             Process process = pb.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
-            boolean correctInterface = false;
+            
             while ((line = reader.readLine()) != null) {
-                if (line.length() != 0) {
-                    if (line.contains("Interface") && line.contains(nic.getIPaddress())) {
-                        correctInterface = true;
-                    } else if (line.contains("Interface") && !line.contains(nic.getIPaddress())) {
-                        correctInterface = false;
+                //Search for correct NIC in output stream 
+                if (line.contains("Interface") && line.contains(nic.getIPaddress())) {
+                    //Stop at next interface
+                    while ((line = reader.readLine()) != null && !line.contains("Interface")) {
+                        if (line.contains(ipAddr)) {      
+                            //Return MAC address - fixed position in line 
+                            return line.substring(24, 41).toUpperCase();
+                        } 
                     }
-                    if (correctInterface && line.contains(ipAddr)) {
-                        line = line.replace(ipAddr, "");
-                        line = line.trim();
-                        int index = line.indexOf(" ");
-                        line = line.substring(0, index);
-
-                        return line.toUpperCase();
-                    }
-                }
+                }        
             }
-            for (int i = 0; i <= NetworkInterface.getSystemNetworkInterfaceControllers().size(); i++) {
-                if (ipAddr.equals(NetworkInterface.getSystemNetworkInterfaceControllers().get(i).getIPaddress())) {
-                    return NetworkInterface.getSystemNetworkInterfaceControllers().get(i).getMAC().toUpperCase();
-                }
-            }
-            return "";
-        } catch (Exception e) {
-            return "";
+            return "NA";
+        } catch (IOException e) {
+            return "NA";
         }
+
+
     }
 
     private String getManufacturer(String macAddr) {

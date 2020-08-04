@@ -4,13 +4,9 @@ package org.mlb.NetworkScanner;
 import org.mlb.NetworkTool.*;
 import org.mlb.Utility.*;
 import org.mlb.NetworkInterfaceTool.*;
+import org.mlb.NetworkScanner.*;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.LinkedList;
-import java.util.Scanner;
 
 import static javafx.application.Platform.runLater;
 
@@ -72,47 +68,22 @@ public class NetworkScannerService {
             try {
                 String address = formatIpAddress(nic);
                 address = address + i;
-                pingDeviceAndGetInformation(address, nic);
+                NetworkLocation networkLocation = new PingDeviceAndGetInformation().start(address, nic);
+                if (networkLocation != null) {
+                    Main.controller.getNetworkScanner().addToTable(networkLocation);    
+                }
             } catch (NullPointerException e) {
                 e.printStackTrace();
             } catch (NumberFormatException e) {
+                e.printStackTrace();
+            } finally {
                 runLater(() -> {
                     double incrementBy = 1.0 / (Main.controller.getNetworkScanner().getRangeMax()
                             - Main.controller.getNetworkScanner().getRangeMin() + 1);
-                    progress = progress + incrementBy;
+                    progress += incrementBy;
                 });
             }
             queue.logout();
-        });
-    }
-
-    private void pingDeviceAndGetInformation(String address, NetworkInterfaceController nic)
-            throws IllegalStateException {
-        String hostName = getHostNameFromIp(address, Main.controller.getNetworkScanner().getTimeout());
-        if (hostName != null) {
-            String macAddr = getMacFromArpTable(address, nic);
-            String manufacturer = getManufacturer(macAddr);
-            if (!address.equals(nic.getIPaddress())) {
-                final NetworkLocation networkLocation = new NetworkLocation(hostName, address, macAddr, manufacturer);
-
-                if (Main.controller.getNetworkScanner().getScanInProgress()) {
-                    boolean duplicateNetworkLocation = false;
-                    for (int i = 0; i < Main.controller.getNetworkScanner().getTableSize(); i++) {
-                        NetworkLocation temp = Main.controller.getNetworkScanner().getTableRow(i);
-                        if (temp.getMacAddr().equals(networkLocation.getMacAddr())) {
-                            duplicateNetworkLocation = true;
-                        }
-                    }
-                    if (!duplicateNetworkLocation) {
-                        Main.controller.getNetworkScanner().addToTable(networkLocation);
-                    }
-                }
-            }
-        }
-        runLater(() -> {
-            double incrementBy = 1.0 / (Main.controller.getNetworkScanner().getRangeMax()
-                    - Main.controller.getNetworkScanner().getRangeMin() + 1);
-            progress = progress + incrementBy;
         });
     }
 
@@ -132,90 +103,6 @@ public class NetworkScannerService {
         }
     }
 
-    private String getHostNameFromIp(String ipAddr, int timeout) {
-        ProcessBuilder pb = new ProcessBuilder();
-        String command = "ping -a -n 1 " + ipAddr + " -w " + timeout;
-        pb.command("cmd.exe", "/c", command);
-        try {
-            Process process = pb.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            String hostName = null;
-            while ((line = reader.readLine()) != null) {
-                if (line.length() != 0) {
-                    if (line.contains("Destination host unreachable")) {
-                        break;
-                    }
-                    if (line.contains("Pinging")) {
-                        if (line.contains("[") && line.contains("]")) {
-                            hostName = line.substring(8, line.indexOf("[") - 1);
-                        } else {
-                            hostName = "";
-                        }
-                    }
-                    if (line.contains("Reply from ")) {
-                        return hostName;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private String getMacFromArpTable(String ipAddr, NetworkInterfaceController nic) {
 
 
-        try {
-            ProcessBuilder pb = new ProcessBuilder();
-            pb.command("cmd.exe", "/c", "arp -a");
-            Process process = pb.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            
-            while ((line = reader.readLine()) != null) {
-                //Search for correct NIC in output stream 
-                if (line.contains("Interface") && line.contains(nic.getIPaddress())) {
-                    //Stop at next interface
-                    while ((line = reader.readLine()) != null && !line.contains("Interface")) {
-                        if (line.contains(ipAddr)) {      
-                            //Return MAC address - fixed position in line 
-                            return line.substring(24, 41).toUpperCase();
-                        } 
-                    }
-                }        
-            }
-            return "NA";
-        } catch (IOException e) {
-            return "NA";
-        }
-
-
-    }
-
-    private String getManufacturer(String macAddr) {
-        try {
-            String manufacturer = null;
-            String mac = macAddr;
-            mac = mac.replace("-", ":");
-            mac = mac.substring(0, 8);
-            File file = new File("src/main/resources/MacAddress.xml");
-            Scanner scanner = new Scanner(file);
-            while(scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                if(line.contains(mac)) {
-                    int startString = OrdinalIndexOf.ordinalIndexOf(line, "\"", 3) + 1;
-                    int endString = OrdinalIndexOf.ordinalIndexOf(line, "\"", 4);
-                    manufacturer = line.substring(startString, endString);
-                    break;
-                }
-            }
-            scanner.close();
-            return manufacturer;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "NA";
-        }
-    }
 }

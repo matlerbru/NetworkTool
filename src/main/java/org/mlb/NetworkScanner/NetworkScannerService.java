@@ -4,7 +4,6 @@ package org.mlb.NetworkScanner;
 import org.mlb.NetworkTool.*;
 import org.mlb.Utility.*;
 import org.mlb.NetworkInterfaceTool.*;
-import org.mlb.NetworkScanner.*;
 
 import java.util.LinkedList;
 
@@ -12,8 +11,11 @@ import static javafx.application.Platform.runLater;
 
 public class NetworkScannerService {
 
-    public NetworkScannerService() {
+    public NetworkScannerService(int timeout) {
+        this.timeout = timeout;
     }
+
+    private int timeout;
 
     private double progress;
 
@@ -68,7 +70,7 @@ public class NetworkScannerService {
             try {
                 String address = formatIpAddress(nic);
                 address = address + i;
-                NetworkLocation networkLocation = new PingDeviceAndGetInformation().start(address, nic);
+                NetworkLocation networkLocation = new PingDeviceAndGetInformation().start(address, timeout);
                 if (networkLocation != null) {
                     Main.controller.getNetworkScanner().addToTable(networkLocation);    
                 }

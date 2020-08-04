@@ -1,7 +1,5 @@
 package org.mlb.NetworkScanner;
 
-import org.mlb.NetworkTool.*;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -11,10 +9,10 @@ import java.util.Scanner;
 import org.mlb.NetworkInterfaceTool.*;
 import org.mlb.Utility.*;
 
-public class PingDeviceAndGetInformation {
+class PingDeviceAndGetInformation {
     
-    public NetworkLocation start(String address, NetworkInterfaceController nic) throws IllegalStateException {
-        String hostName = getHostNameFromIp(address, Main.controller.getNetworkScanner().getTimeout());
+    protected NetworkLocation start(String address, int timeout) throws IllegalStateException {
+        String hostName = getHostNameFromIp(address, timeout);
         if (hostName != null) {
             String macAddr = getMacFromArpTable(address);
             String manufacturer = TextFormat.isFormattedAsMac(macAddr) ? getManufacturer(macAddr) : "NA";

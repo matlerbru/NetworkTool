@@ -190,7 +190,7 @@ public class NetworkScanner implements Initializable {
         LinkedList<Thread> scans = new LinkedList<>();
 
         for (int i = 0; i < NetworkInterface.getSystemNetworkInterfaceControllers().size(); i++) {
-            NetworkScannerService scanner = new NetworkScannerService();
+            NetworkScannerService scanner = new NetworkScannerService(getTimeout());
             Thread scan = scanner.scan(i);
 
             scanners.add(scanner);
@@ -222,7 +222,7 @@ public class NetworkScanner implements Initializable {
     }
 
     private void scanSingleNic() {
-        NetworkScannerService scanner = new NetworkScannerService();
+        NetworkScannerService scanner = new NetworkScannerService(getTimeout());
         Thread scan = scanner.scan(nicSelector.getSelectionModel().getSelectedIndex()-1);
         scan.start();
 

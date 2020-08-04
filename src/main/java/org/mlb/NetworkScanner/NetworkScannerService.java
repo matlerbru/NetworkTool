@@ -11,11 +11,11 @@ import static javafx.application.Platform.runLater;
 
 public class NetworkScannerService {
 
-    public NetworkScannerService(int timeout) {
-        this.timeout = timeout;
+    public NetworkScannerService(int scanTimeout) {
+        this.scanTimeout = scanTimeout;
     }
 
-    private int timeout;
+    private int scanTimeout;
 
     private double progress;
 
@@ -70,7 +70,7 @@ public class NetworkScannerService {
             try {
                 String address = formatIpAddress(nic);
                 address = address + i;
-                NetworkLocation networkLocation = new PingDeviceAndGetInformation().start(address, timeout);
+                NetworkLocation networkLocation = new PingDeviceAndGetInformation().start(address, scanTimeout);
                 if (networkLocation != null) {
                     Main.controller.getNetworkScanner().addToTable(networkLocation);    
                 }
